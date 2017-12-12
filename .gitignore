@@ -20,3 +20,6 @@
 target
 .project
 .classpath
+
+# self-files#
+src/main/java/com/sunquan/toptrade
