@@ -10,13 +10,17 @@ import java.util.TreeSet;
 
 public class MyFileUtils {
 
-	// 读取一个目录下的所有文件
+	/**
+	 *  read all file's name from spath 
+	 * @param spath
+	 * @return sorted files Set
+	 */
 	public static Set<String> ListFiles(String spath) {
 		Set<String> result = new TreeSet<String>();
 		File dir = new File(spath);
-		if (dir.isDirectory() && dir.exists()) {
+		if (dir.exists() && dir.isDirectory()) {
 			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; i++) {
+			for (int i = 0; i < files.length; ++i) {
 				if (files[i].isFile()) {
 					result.add(files[i].getName());
 				}
@@ -24,24 +28,29 @@ public class MyFileUtils {
 		}
 		return result;
 	}
-
+	
 	/**
-	 *  写之前确保文件所在的文件夹已经创建,否则会写入异常
+	 * check the Directory exists before write, if no create it!
+	 * @param path
 	 * @param fileName
 	 * @param data
-	 * @param len
 	 * @return true when success, false when write fail!
 	 */
-	public static boolean WriteBytes2File(String fileName, byte[] data) {
+	public static boolean WriteBytes2File(String path, String fileName, byte[] data) {
+		File dir = new File(path);
+		if (!dir.exists()) {
+			System.out.println("mkdirs [" + path +"] "+dir.mkdirs());
+		}
 		try {
-			FileOutputStream out = new FileOutputStream(fileName);
+			String fullfile = dir.getAbsolutePath() + File.separator + fileName;
+			FileOutputStream out = new FileOutputStream(fullfile);
 			out.write(data, 0, data.length);
 			out.close();
 			return true;
 		} catch (FileNotFoundException e) {
 			System.err.println("ERROR: can't find file! " + e.getMessage());
 		} catch (IOException e) {
-			System.err.println("ERROR: write2file!" + e.getMessage());
+			System.err.println("ERROR: WriteBytes2File()!" + e.getMessage());
 		}
 		return false;
 	}
@@ -54,9 +63,10 @@ public class MyFileUtils {
 	 */
 	public static byte[] ReadFileAsBytes(String fileName) {
 		File file = new File(fileName);
-		int len = (int) file.length();
-		if (len <= 0)
+		if ((!file.exists()) || file.length() <= 0) {
 			return null;
+		}
+		int len = (int) file.length();
 		byte[] b = new byte[len];
 		FileInputStream in;
 		try {
