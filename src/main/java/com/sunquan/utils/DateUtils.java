@@ -20,12 +20,8 @@ public class DateUtils {
 	 * @return String CurDate YYYYMMDD
 	 */
 	public static String CurDateStr() {
-		Calendar cal = Calendar.getInstance();
-		int year = cal.get(Calendar.YEAR);
-		int month = cal.get(Calendar.MONTH) + 1;
-		int day = cal.get(Calendar.DAY_OF_MONTH);
-		String output = String.format("%04d%02d%02d", year, month, day);
-		return output;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		return sdf.format(new Date());
 	}
 	/**
 	 * @return String CurDate YYYY-MM-DD
