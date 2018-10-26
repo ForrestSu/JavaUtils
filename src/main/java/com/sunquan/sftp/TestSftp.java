@@ -1,5 +1,7 @@
 package com.sunquan.sftp;
 
+import java.util.Vector;
+
 import com.jcraft.jsch.SftpException;
 
 public class TestSftp 
@@ -28,6 +30,12 @@ public class TestSftp
             // 2 下载单个文件
             // sftp.download("/home/opadm/sunquan/upload/sftp/123", "test_sftp.jpg", "config/");
             // System.out.println("download ok..");
+
+            // 3 列出远程文件列表
+            Vector<?> lists = sftp.listFiles("/home/opadm/sunquan");
+            for (int k = 0; k < lists.size(); ++k) {
+                System.out.println(lists.get(k));
+            }
         } catch (SftpException e) {
             e.printStackTrace();
         } 
