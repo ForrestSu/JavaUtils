@@ -28,7 +28,7 @@ public class TestSftp
             System.out.println("upload ok..");
 
             // 2 下载单个文件
-            // sftp.download("/home/opadm/sunquan/upload/sftp/123", "test_sftp.jpg", "config/");
+            // sftp.downloadFile("/home/opadm/sunquan/upload/sftp/123", "test_sftp.jpg", "config/");
             // System.out.println("download ok..");
 
             // 3 列出远程文件列表
