@@ -1,7 +1,10 @@
 package com.sunquan.sys;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Properties;
 
 public class SysUtil {
     /**
@@ -33,5 +36,36 @@ public class SysUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Load system properties from a given set of filenames or URLs.
+     *
+     * @param filenamesOrUrls that holds properties
+     * @see #loadPropertiesFile(String)
+     */
+    public static void loadPropertiesFiles(final String[] filenamesOrUrls) {
+        for (final String filenameOrUrl : filenamesOrUrls) {
+            loadPropertiesFile(filenameOrUrl);
+        }
+    }
+
+    /**
+     * Load system properties from a given filename
+     * <p>
+     * File is searched for in resources.
+     *
+     * @param filename that holds properties
+     */
+    public static void loadPropertiesFile(final String filename) {
+        final Properties properties = new Properties(System.getProperties());
+        final File file = new File(filename);
+        if (file.exists()) {
+            try (FileInputStream in = new FileInputStream(file)) {
+                properties.load(in);
+            } catch (final Exception ignore) {
+            }
+        }
+        System.setProperties(properties);
     }
 }

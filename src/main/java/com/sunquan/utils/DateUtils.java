@@ -38,6 +38,11 @@ public class DateUtils {
         return sdf.format(new Date());
     }
 
+    public static String CurDateTimeStr() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.format(new Date());
+    }
+
     public static int CurTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
         return Integer.valueOf(sdf.format(new Date()));
@@ -68,6 +73,18 @@ public class DateUtils {
         return span;
     }
 
+    public static long TimeSpanMS(String hhmmss, boolean bNextDay) {
+        String[] arr = hhmmss.split(":");
+        if (arr.length != 3) {
+            System.err.println("invaild timepoint format! timepoint is " + hhmmss);
+            return 5; // 5 seconds
+        }
+        int hour = Integer.valueOf(arr[0]);
+        int minute = Integer.valueOf(arr[1]);
+        int sec = Integer.valueOf(arr[2]);
+        return TimeSpanMS(hour, minute, sec, bNextDay);
+    }
+
     public static String MsToHuman(int tm) {
         tm /= 1000;
         int sec = tm % 60;
@@ -75,6 +92,6 @@ public class DateUtils {
         int min = tm % 60;
         tm /= 60;
         int hour = tm;
-        return String.format("%d hour %d min %d sec!", hour, min, sec);
+        return String.format("%d hour %d min %d seconds", hour, min, sec);
     }
 }
