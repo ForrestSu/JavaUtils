@@ -11,7 +11,7 @@ import sun.misc.Signal;
 /**
  * Utility to allow the registration of a SIGINT handler that hides the unsupported {@link Signal} class.
  */
-public class SigInt
+public class SigTerm
 {
     /**
      * Register a task to be run when a SIGINT is received.
@@ -20,6 +20,6 @@ public class SigInt
      */
     public static void register(final Runnable task)
     {
-        Signal.handle(new Signal("INT"), (signal) -> task.run());
+        Signal.handle(new Signal("TERM"), (signal) -> task.run());
     }
 }

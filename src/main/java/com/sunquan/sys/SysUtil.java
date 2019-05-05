@@ -9,8 +9,8 @@ import java.util.Properties;
 public class SysUtil {
     /**
      * 执行一个shell 脚本
-     * @param shcmd
-     *            "sh /home/trade/build.sh"
+     * 
+     * @param shcmd "sh /home/trade/build.sh "
      */
     public static void DoCmd(String shcmd) {
         try {

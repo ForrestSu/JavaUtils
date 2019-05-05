@@ -61,6 +61,7 @@ public class TaobaoHaveShop {
 		}
 		return false;
 	}
+
 	public static void main(String[] args) throws IOException {
 	
 		 final long timeSpanSec = 3;
