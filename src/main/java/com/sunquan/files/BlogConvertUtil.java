@@ -2,7 +2,9 @@ package com.sunquan.files;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -40,18 +42,17 @@ public class BlogConvertUtil {
     private static String HEADER_SPLIT_TAG = "---";
 
     public static int CrawlArticleDate(String url) throws IOException {
-
-        Document doc = Jsoup.connect(url).ignoreContentType(true)
-                .data("query", "Java")
-                .userAgent("Mozilla")
-                .cookie("auth", "token")
-                .timeout(3000)
-                .get();
+        // TODO each page is 9 records
+        // order_by=shared_at&page=3
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("order_by", "shared_at");
+        data.put("page", "11");
+        Document doc = Jsoup.connect(url).header("x-infinitescroll", "true").data(data).get();
         System.out.println(doc);
-        Elements elements = doc.select("li");
+        /* Elements elements = doc.select("li");
         for (Element element : elements) {
             System.out.println(element.text());
-        }
+        }*/
         return 0;
     }
 
