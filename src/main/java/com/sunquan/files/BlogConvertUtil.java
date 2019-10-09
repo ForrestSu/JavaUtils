@@ -47,9 +47,12 @@ public class BlogConvertUtil {
         Map<String, String> data = new HashMap<String, String>();
         data.put("order_by", "shared_at");
         data.put("page", "11");
-        Document doc = Jsoup.connect(url).header("x-infinitescroll", "true").data(data).get();
+        Document doc = Jsoup.connect(url)
+                .header("x-infinitescroll", "true")
+                .data(data)
+                .get();
         System.out.println(doc);
-        /* Elements elements = doc.select("li");
+        /* Elements elements = doc.select("ul.note-list");
         for (Element element : elements) {
             System.out.println(element.text());
         }*/
