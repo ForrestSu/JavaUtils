@@ -14,6 +14,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/***
+ * 从简书迁移 blog
+ */
 
 /**
  * -需求： 转换Blog 
@@ -36,7 +39,7 @@ tags: [github]    // 从文章名称中提取关键字
 <!--more-->
  */
 
-public class BlogConvertUtil {
+public class Blog_Migration {
 
     private static String MD_FILE_ENCODING = "utf-8";
     private static String LINE_ENDING = "\n";
