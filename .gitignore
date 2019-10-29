@@ -21,5 +21,8 @@ target
 .project
 .classpath
 
+# IDEA
+.idea
+
 # self-files#
 src/main/java/com/sunquan/toptrade
