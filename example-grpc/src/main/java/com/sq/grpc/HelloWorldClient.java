@@ -1,5 +1,8 @@
 package com.sq.grpc;
 
+import com.sq.grpc.proto.GreeterGrpc;
+import com.sq.grpc.proto.HelloReply;
+import com.sq.grpc.proto.HelloRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;

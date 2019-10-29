@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class HelloWorldClientAsync {
 
     private final ManagedChannel channel;
-    private final GreeterGrpc.GreeterBlockingStub blockingStub;
+    private final GreeterGrpc.GreeterStub stub;
 
     /** Construct client connecting to HelloWorld server at {@code host:port}. */
     public HelloWorldClientAsync(String host, int port) {
@@ -28,7 +28,7 @@ public class HelloWorldClientAsync {
     /** Construct client for accessing HelloWorld server using the existing channel. */
     HelloWorldClientAsync(ManagedChannel channel) {
         this.channel = channel;
-        blockingStub = GreeterGrpc.newBlockingStub(channel);
+        stub = GreeterGrpc.newStub(channel);
     }
 
     public void shutdown() throws InterruptedException {
@@ -40,13 +40,14 @@ public class HelloWorldClientAsync {
         System.out.println("send => [" + name + "] ...");
         HelloRequest request = HelloRequest.newBuilder().setName(name).build();
         HelloReply response;
+
         try {
-            response = blockingStub.sayHello(request);
+            // response = stub.echo(request, response);
         } catch (StatusRuntimeException e) {
             System.out.println("RPC failed: " + e.getStatus());
             return;
         }
-        System.out.println("recv <= " + response.getMessage());
+        // System.out.println("recv <= " + response.getMessage());
     }
 
     /**
