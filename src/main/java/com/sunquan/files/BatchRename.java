@@ -4,8 +4,10 @@ import java.io.*;
 
 public class BatchRename {
 
-	// 需要替换的字符串
-	public static String replace_STR = "OLD_NAME";
+	// 需要被替换的字符串
+	public static String replaced_STR = "OLD_NAME";
+	// 新的字符串
+	public static String new_STR = "";
 	// 测试模式只打印 新文件的名称，不真正做重命名
 	public static Boolean is_test_mode = true;
 
@@ -18,8 +20,8 @@ public class BatchRename {
 	public static boolean RenameSingleFile(File f) {
 		boolean isSuccess = false;
 		String filename = f.getName();
-		if (filename.contains(replace_STR)) {
-			String newfile = filename.replace(replace_STR, "");
+		if (filename.contains(replaced_STR)) {
+			String newfile = filename.replace(replaced_STR, new_STR);
 			String new_full_name = f.getParent() + File.separator + newfile;
 			if (is_test_mode) {
 				System.out.println(new_full_name);
@@ -60,7 +62,7 @@ public class BatchRename {
 	public static void main(String[] args) {
 		System.out.println("start....");
 		/* 输入文件夹路径 */
-		String inpath = "/Users/sq/video_learn/geek/63 趣谈Linux操作系统";
+		String inpath = "/Users/sq/Downloads/53 Go语言从入门到实战";
 		int iCount = ShowAllSubFile(inpath);
 		System.out.println("total success rename " + iCount + " files.");
 		System.out.println("Complete.");
