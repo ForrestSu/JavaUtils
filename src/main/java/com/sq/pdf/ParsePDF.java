@@ -8,19 +8,15 @@ import java.util.HashMap;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.ContentOperator;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
-import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 
 public class ParsePDF {
 
-    public static String pdf_path = "config/sample_table.pdf";
-    public static String result_txt = "C:\\Users\\xunce\\Desktop\\result.txt";
-
-    public static void parsePdf(String pdf, String txt) throws IOException {
+    public static void parsePdf(String pdf, String txt, String saveImagesDir) throws IOException {
         PdfReader reader = new PdfReader(pdf);
         PdfReaderContentParser parser = new PdfReaderContentParser(reader);
         PrintWriter out = new PrintWriter(new FileOutputStream(txt));
         
-        SqExtractStrategy parse = new SqExtractStrategy();
+        SqExtractStrategy parse = new SqExtractStrategy(saveImagesDir);
         HashMap<String, ContentOperator> listen_action = new HashMap<String, ContentOperator>();
         listen_action.put("m", parse); // listen Move action
         listen_action.put("l", parse); // listen LineTo action
@@ -36,8 +32,13 @@ public class ParsePDF {
     }
 
     public static void main(String[] args) {
+
+        final String inputPdf = "config/sample_table.pdf";
+        final String outputDir = "C:\\Users\\xunce\\Desktop\\pdf\\";
+        final String saveText = outputDir + "result.txt";
+        final String saveImagesDir = outputDir;
         try {
-            parsePdf(pdf_path, result_txt);
+            parsePdf(inputPdf, saveText, saveImagesDir);
         } catch (IOException e) {
             e.printStackTrace();
         }

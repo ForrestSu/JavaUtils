@@ -1,17 +1,12 @@
 package com.sq.pdf;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import com.itextpdf.text.pdf.PdfLiteral;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.parser.ContentOperator;
-import com.itextpdf.text.pdf.parser.ImageRenderInfo;
-import com.itextpdf.text.pdf.parser.LineSegment;
-import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
-import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
-import com.itextpdf.text.pdf.parser.TextRenderInfo;
-import com.itextpdf.text.pdf.parser.Vector;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.parser.*;
 
 public class SqExtractStrategy implements TextExtractionStrategy, ContentOperator {
 
@@ -19,12 +14,21 @@ public class SqExtractStrategy implements TextExtractionStrategy, ContentOperato
     private Vector lastEnd;
 
     /** used to store the resulting String. */
-    private final StringBuffer result = new StringBuffer();;
+    private final StringBuffer result = new StringBuffer();
 
+    // images
+    private int m_ImageIndex = 100000;
+
+    private String m_SaveImageDir = "";
     /**
      * Creates a new text extraction renderer.
      */
-    public SqExtractStrategy() {
+    public SqExtractStrategy(String SaveImageDir) {
+        if (SaveImageDir.endsWith(File.separator)) {
+            m_SaveImageDir = SaveImageDir;
+        } else {
+            m_SaveImageDir = SaveImageDir + File.separator;
+        }
     }
 
     /**
@@ -126,7 +130,36 @@ public class SqExtractStrategy implements TextExtractionStrategy, ContentOperato
      */
     public void renderImage(ImageRenderInfo renderInfo) {
         // do nothing - we aren't tracking images in this renderer
-        System.out.println("Image");
+        String prefixName = "img";
+        String filePath =  m_SaveImageDir;
+        try
+        {
+            PdfImageObject image = renderInfo.getImage();
+            if (image == null) return;
+            int number = renderInfo.getRef() != null ? renderInfo.getRef().getNumber() : m_ImageIndex++;
+            String filename = String.format("%s-%s.%s", prefixName, number, image.getFileType());
+            System.out.println("Image:" + filename);
+            FileOutputStream os = new FileOutputStream(filePath + filename);
+            os.write(image.getImageAsBytes());
+            os.flush();
+            os.close();
+
+            PdfDictionary imageDictionary = image.getDictionary();
+            PRStream maskStream = (PRStream) imageDictionary.getAsStream(PdfName.SMASK);
+            if (maskStream != null)
+            {
+                PdfImageObject maskImage = new PdfImageObject(maskStream);
+                filename = String.format("%s-mask-%s.%s", prefixName, number, maskImage.getFileType());
+                os = new FileOutputStream(filePath + filename);
+                os.write(maskImage.getImageAsBytes());
+                os.flush();
+                os.close();
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
