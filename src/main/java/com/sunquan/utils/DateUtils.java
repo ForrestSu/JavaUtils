@@ -45,7 +45,7 @@ public class DateUtils {
 
     public static int CurTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
-        return Integer.valueOf(sdf.format(new Date()));
+        return Integer.parseInt(sdf.format(new Date()));
     }
 
     /**
