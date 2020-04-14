@@ -25,6 +25,14 @@ public class TypeConvert {
         return sqlType;
     }
 
+    public static String getJDBCType(String sqlType) {
+        sqlType = sqlType.toUpperCase();
+        if ("INT".equals(sqlType)) {
+            return "INTEGER";
+        }
+        return sqlType;
+    }
+
     public static String getJavaType(String sqlType) {
         if (sqlType == null || sqlType.isEmpty()) {
             System.err.println("sqlType is null!");
