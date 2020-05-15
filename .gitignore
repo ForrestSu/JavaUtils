@@ -16,13 +16,14 @@
 *.rar
 
 # Eclipse
-.settings
-target
+.settings/
 .project
 .classpath
 
 # IDEA
-.idea
+.idea/
+target/
+*.iml
 
 # self-files#
 src/main/java/com/sunquan/toptrade
