@@ -1,0 +1,200 @@
+package com.sunquan.zmqproto;
+
+import public "typedef.proto";
+import public "msgcarrier.proto";
+
+option java_package = "com.sunquan.zmqproto";
+option java_outer_classname = "UserAuthClass";
+
+
+/* Login
+Request format:
+  <Carrier>		
+	  where
+		  Carrier.type = MSGCARRIER.USERAUTH
+		  Carrier.message = <USERAUTH::UserAuth>
+		
+  Reply format:
+  <Carrier>	
+	  where
+		  Carrier.type = MSGCARRIER.USERAUTHREP
+		  Carrier.message = <USERAUTH::UserAuthRep>
+
+*/
+
+enum LoginMsg
+{
+	LOGINSUCCESS = 1;
+	PASSPORT_ERROR = 2;
+	INEXISTENCE_USER = 3;
+    CLIENT_CHECK_FAIL  = 4;
+}
+
+enum ClientCheckResult
+{
+    INVALID = 0; // invalid
+    ALLOWED = 1; // 允许该客户端登录
+    REJECTED = 2; // 拒绝该客户端登录
+    REJECTED_MUST_UPGRADE = 3; // 该客户端升级后，才允许登录
+    ALLOWED_SHOULD_UPGRADE = 4; // 允许该客户端登录，强烈建议客户升级，以使用新功能或修改一些bugs。
+}
+
+message UserInfo
+{
+        optional string username = 1;
+        optional string password = 2;
+        optional string pubkey   = 3;
+
+        optional TypeDef.UserRole role  = 4 [default = UR_DEALER];    //用户角色, 交易员,风控员，管理员等
+        optional string auth    = 5;    //用户权限，以 ',' 分隔
+        optional string product = 6;    //用户所辖产品，以 ',' 分隔
+
+        optional string company = 7;
+        optional string phone   = 8;
+        optional string email   = 9;
+        optional string authmacs = 10;//用户被授权的mac地址，以 ',' 分隔
+        optional string useralias = 11;//用户别名，用于记录实际姓名.
+        optional TypeDef.UserStatus status = 12 [default = US_ACTIVE];// 用户状态
+        optional bool resetacctpwd = 13 [default = false];  //允许重置资金帐号密码
+}
+
+message FileValidateInfo
+{
+    optional string filename = 1;
+    optional int64 filesize = 2;
+    optional string md5 = 3;
+}
+
+message ValidateFilesData
+{
+    repeated FileValidateInfo fileinfo = 1;
+}
+
+enum SmtpServerConnectType              // SMTP
+{
+    SSCT_UNDEFINED = 0;
+    SSCT_SSL = 1;
+    SSCT_TLS = 2;
+    SSCT_TCP = 3;
+}
+
+message SmtpServerConfigure
+{
+    optional string address = 1;        // The address of server
+    optional SmtpServerConnectType type = 2;
+    optional uint32 port = 3;
+    optional string account = 4 ;
+    optional string password = 5;
+    optional uint32 freq = 6;               // The freq of send mail. uint: mins
+    optional uint32 maxConnTime = 7;        // uint: sec
+    optional uint32 maxRespTime = 8;        // uint: sec
+    optional uint32 maxSendMsgTime = 9;     // uint: sec
+}
+
+message CheckReport
+{
+    optional uint32 quoteDelayTime = 1;    // uint: sec
+    optional uint32 emsCrash = 2;
+}
+
+message MailContents
+{
+    optional string sender = 1;  // sender address of mail if mail server supports.
+    repeated string to = 2;         // format: name<email@server.com>
+    repeated string cc = 3;         // format: name<email@server.com>
+    repeated string bcc = 4;        // format: name<email@server.com>
+    optional string subject = 5;
+    optional string content = 6;
+    optional string extra = 7 ; // extra message
+    repeated string attachment = 8;
+}
+
+message MailConfigure
+{
+    optional SmtpServerConfigure server = 1;
+    optional MailContents  contents = 2;
+    optional CheckReport   checks = 3;
+}
+
+message ClientInfo
+{
+    // 以下供服务器检测客户端使用,修改这个结构后要测试MD5校验
+    optional string buildversion = 1; // 客户端版本号 2.0.0.1234
+    optional string builddate = 2;    // 客户端build日期 2016-10-28
+    optional string buildtime = 3;    // 客户端build时间 13:20:20
+    optional string buildtype = 4;    // 客户端build类别 "QA", "DEV"
+    optional string id   = 5;         // 客户端buildID,用来区分不用客户的客户端不能混用  "toptrade"
+    optional string checksum  = 6;    // MD5 CheckSum
+    optional ValidateFilesData validatefilesdata = 7;
+    optional bool requestSmtpArguments = 8;
+}
+
+message ClientLimitedInfo
+{
+    // 以下供服务器限制客户端,修改这个结构后要测试MD5校验
+    optional ClientCheckResult result = 1;
+    optional string clientdate = 2;    // 服务器要求客户端的build日期 2016-10-28
+    optional string clienttime = 3;    // 服务器要求客户端的build时间 13:20:20
+    repeated string clienttypes = 4;    // 服务器要求客户端的build类别 "QA", "DEV"
+    repeated string clientids   = 5;    // 服务器要求客户端的build ID  "toptrade"
+    optional string clientminversion = 6; // 服务器要求客户端的最小版本号 2.0.0.1234
+    optional string clientmaxversion = 7; // 服务器要求客户端的最大版本号 2.0.0.1234
+    repeated string repositorys = 8;        // 升级服务器仓库URL列表
+    repeated string servers = 9;            // 交易服务器
+    optional string tip = 10;               // 服务器检查客户端附加信息
+
+    optional string version = 11;           // 服务器build版本号2.0.0.1234
+    optional string date = 12;              // 服务器build日期
+    optional string time = 13;              // 服务器build时间
+    optional string type = 14;              // 服务器build类别 "QA", "DEV"
+    optional string id = 15;                // 服务器ID
+    optional string name = 16;              // 服务器name
+    optional string checksum = 17;          // MD5 checksum
+}
+
+message UserHeartBt
+{
+    optional int64 reqid = 1;
+    optional string username = 2;
+    optional string ip = 3;
+}
+
+message UserAuth
+{
+	optional string username = 1;
+	optional string password = 2;
+    optional string product = 3;
+    optional int64 reqid = 4;
+    optional string pubkey = 5;
+	optional string ip = 6;
+    optional string mac = 7;
+    optional bytes diskid = 8;
+    optional string cpuid = 9;
+	
+    optional ClientInfo clientinfo = 10;
+}
+
+message UserAuthRep
+{
+	optional int64 reqid = 1;
+	optional bool status = 2;
+	optional LoginMsg msg = 3;
+    optional string company = 4;
+	repeated string role = 5;
+	optional string username = 6;
+	optional TypeDef.UserRole userrole = 7;
+	repeated string authmac = 8;
+    optional ClientLimitedInfo clientlimitedinfo = 9;
+	optional bool isInit = 10 [default = true];
+	optional bool resetacctpwd = 11 [default = false];  //允许重置资金帐号密码
+	optional TypeDef.UserStatus userstatus = 12 [default = US_ACTIVE];// 用户状态
+    optional MailConfigure mailConfigure = 13;
+}
+
+message UserOperate
+{
+	optional int64 reqid = 1;
+	optional string operateuser = 2;
+	optional TypeDef.EmsEditType operatetype = 3;
+	optional UserInfo userinfo = 4;
+}

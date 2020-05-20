@@ -1,0 +1,84 @@
+package com.sunquan.zmqproto;
+
+option java_package = "com.sunquan.zmqproto";
+option java_outer_classname = "T0tradingClass";
+
+import public "msgcarrier.proto";
+import public "typedef.proto";
+import public "tradingproxy.proto";
+
+
+
+/* 可用信息
+    publish sub account asset available
+ 	optional string account = 1;
+ 	optional PB.TYPEDEF.TypeDef.SecurityType securitytype = 2 [default = SECURITY_UNKNOWN];
+    optional double currbalance = 3; //当前余额
+    optional double available = 4;   //可用余额
+    optional double mktval = 5;      //持仓市值
+    optional double asset = 6;       //账户总资产
+ 	optional double tdgain = 7;      //当日盈亏
+ 	optional double positiongain = 8; //持仓盈亏
+ 	optional double closegain = 9;   //平仓盈亏
+ 	optional int64 poscount = 10;  //持仓条数
+*/
+
+/* 1. Query T0Stock by user
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERY_T0STOCK_REQ
+  Carrier.message = <QueryT0Stock>
+  
+  Reply format:
+  <Carrier>
+
+  where 
+  Carrier.type = MSGCARRIER::QUERY_T0STOCK_RSP
+  Carrier.message = <AcctT0Stock>
+
+  2. Save AcctT0Stock
+  Request format:
+  <Carrier>
+
+  where
+  Carrier.type = MSGCARRIER::SAVE_T0STOCK_REQ
+  Carrier.message = <AcctT0Stock>
+
+  Reply format:
+  <Carrier>
+
+  where
+  Carrier.type = MSGCARRIER::SAVE_T0STOCK_RSP
+  Carrier.message = <SaveT0StockRep>
+*/
+
+
+message QueryT0Stock
+{
+	optional int64 reqid = 1;
+        optional string user = 2;
+	optional AccountInfo accountinfo = 3;
+}
+
+// acct t0 stocks
+message AcctT0Stock
+{
+	optional int64 reqid = 1;
+	optional AccountInfo accountinfo = 2; //主账号信息
+    repeated UserT0Stock items = 3; // 持仓信息
+}
+
+//single user t0 stock
+message UserT0Stock
+{
+    optional string user = 1; //用户ID
+	optional AccountBusiness asset = 2; //账户可用信息
+	repeated PositionInfo positems = 3; // 持仓信息
+}
+
+message SaveT0StockRep
+{
+        optional int64 reqid = 1;
+}

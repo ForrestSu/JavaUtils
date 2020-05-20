@@ -3,14 +3,14 @@ package com.sq.files;
 import java.io.*;
 
 
-public class CountSrcFileLines {
+public class CountLinesOfCode {
 
 	static FileWriter fw;
 	static BufferedWriter writer;
 	static String headTitle = "＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝";
 	static String endline="\n";
-	public CountSrcFileLines() {}
-	public CountSrcFileLines(String outputPath)
+	public CountLinesOfCode() {}
+	public CountLinesOfCode(String outputPath)
 	{
 		String os=System.getProperties().getProperty("os.name");
 		if(os.startsWith("win")||os.startsWith("Win"))endline="\r\n";
@@ -72,7 +72,7 @@ public class CountSrcFileLines {
 		String inpath="E:\\test";
 		/*输出文件的路径*/
 		String outpathString="E:\\test\\output.java";
-		new CountSrcFileLines(outpathString).showAllSubFile(inpath);
+		new CountLinesOfCode(outpathString).showAllSubFile(inpath);
 		System.out.println("Export Complete.");
 		// 最后关掉输出流
 		try {

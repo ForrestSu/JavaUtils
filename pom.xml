@@ -25,6 +25,7 @@
     <modules>
         <module>demo</module>
         <module>grpc-demo</module>
+        <module>zeromq-protobuf-redis-demo</module>
     </modules>
     
      <build>

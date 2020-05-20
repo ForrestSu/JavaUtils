@@ -1,0 +1,51 @@
+package com.sunquan.zmqproto;
+
+option java_package = "com.sunquan.zmqproto";
+option java_outer_classname = "DemoProtos";
+
+
+message Login 
+{
+    optional int64 userid = 1;
+    optional string username = 2; // name
+    optional string password = 3; // passwd
+    optional string email = 4;
+    optional string nickname = 5;
+    // etc ... 
+}
+
+
+message HelloMessage {
+  required string messageText = 1;
+}
+
+message Alert {
+
+	required int32 severity = 1;
+	repeated string message = 2;
+}
+
+message Task {
+	required string taskName = 1;
+	required int32 workload  = 2;
+}
+
+
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+
+  repeated PhoneNumber phone = 4;
+}

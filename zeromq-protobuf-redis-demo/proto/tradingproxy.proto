@@ -1,0 +1,761 @@
+package com.sunquan.zmqproto;
+
+import public "msgcarrier.proto";
+import public "typedef.proto";
+import public "userauth.proto";
+
+option java_package = "com.sunquan.zmqproto";
+option java_outer_classname = "TradingProxyClass";
+
+message OrderUpdates
+{
+	repeated OrderInfo items = 1;
+	optional string account = 2;
+}
+
+message AdminInfo
+{
+    optional string adminname = 1;
+    optional string ip = 2;
+    optional string mac = 3;
+    optional bytes diskid = 4;
+    optional string cpuid = 5;
+}
+
+message StockFee
+{
+	required TypeDef.Exchange exchange = 1;//证券所在交易所
+	required int32 type = 2; //费用类型，1:股票;2:ETF;3:期货(中金所)
+	optional double total = 3;//费用汇总
+	optional double stamptax = 4;//印花税
+	optional double handling = 5;//经手费
+	optional double securitymanage = 6;//证管费
+	optional double other = 7;//其他费用
+}
+
+message FutureFee
+{
+	required TypeDef.Exchange exchange = 1;//证券所在交易所
+	required int32 type = 2; //费用类型，1:股票;2:ETF;3:期货(中金所)
+	optional double commission = 3;//交易手续费
+	optional int32 perhand_delivery = 4;//每手交割费
+	optional int32 perhand_declare = 5;//每笔申报费
+}
+
+message Brokerage
+{
+	repeated StockFee stockitems = 1;
+	repeated FutureFee futureitems = 2;
+}
+
+message ProductInfo
+{
+    optional string productid = 1;      //系统内部 ID,生成后不可更改
+    optional string p_company = 2;
+    optional string p_contact = 3;
+    optional string p_phone   = 4;
+    optional string p_email   = 5;
+
+    optional AccountInfo stockaccountinfo = 6;  //现货账户
+    optional AccountInfo futureaccountinfo = 7; //期货账户
+    repeated string users = 8;	//授权用户
+
+    optional string productname     = 9;    //对用户显示的名称,可更改
+    optional int64  productvolumn   = 10 [default = 100000000];   //产品规模
+    optional string createdate      = 11;    //产品成立日期
+
+    optional Brokerage costsetting  = 12;
+
+    optional AccountInfo creditaccountinfo = 13;    //信用账户
+
+    optional TypeDef.ProductManageType	product_manage_type	=	14	[default = PRODUCT_MT_SELFMANAGE];	// 产品管理类型
+    optional bool     is_auto_approve	= 15  [default = true]; // 是否自动审批
+    repeated string	  approve_users		= 16; // 审批人
+    optional bool     is_auto_execute	= 17  [default = true]; // 是否自动执行
+    repeated string	  execute_users		= 18; // 执行人
+
+    optional AccountInfo optionaccountinfo = 19;    //期权账户
+    optional double  netassetvalue = 20; //产品单位净值,不设默认值
+    optional TypeDef.ProdStatus status = 21 [default = PS_ACTIVE];  //产品状态
+
+    optional bool is_approve_monitor = 22 [default = false];    //审批监控
+    optional bool is_execute_monitor = 23 [default = false];    //执行监控
+    optional bool is_api_access = 24 [default = false];    //api接入
+	optional string netasset_updatetime = 25; //产品净值最后更新时间，格式为"yyyyMMdd HH:mm:ss"
+}
+
+message ProductOperate
+{
+	optional int64 reqid = 1;
+	optional string operateuser = 2;
+	optional TypeDef.EmsEditType operatetype = 3;
+	optional ProductInfo productinfo = 4;
+}
+
+message AccountInfos
+{
+    repeated AccountInfo accountinfo = 1;
+}
+
+message AccountInfo
+{
+    optional string account = 1;	//账户 ID，存储用，不可编辑
+    optional string password = 2;
+    optional string branchno = 3;
+    optional TypeDef.SecurityProviderEnum securityprovider = 4;
+    optional TypeDef.SecurityType securitytype = 5;
+    optional string stockaccount_sh = 6;
+    optional string stockaccount_sz = 7;
+    optional TypeDef.HedgeType hedgetype = 8;
+    optional string hostip = 9;
+    optional bool is_remember_psw = 10   [default = true];
+    optional string productid = 11;
+    optional string ip = 12;
+    optional string mac = 13;
+    optional bytes diskid = 14;
+    optional string cpuid = 15;
+    optional string accountname = 16;	//账户名称，显示用，可编辑
+	optional AdminInfo admininfo = 17;
+	optional TypeDef.AuthType authtype = 18 [default = NORMAL]; 
+}
+
+message OrderInfo
+{  
+    optional string	securityid = 1;
+    optional string	orderno = 2;  
+	optional TypeDef.BuySell buyselldir = 3 [default = BS_INVALID];
+	optional double price = 4;
+	optional int32 volume = 5;
+	optional int32 tradevolume = 6;
+	optional double tradeprice = 7;
+	optional TypeDef.OrderStatus orderstatus = 8 [default = STATUS_UNKNOWN];
+	optional TypeDef.OpenCloseType opencloseflag = 9 [default = OC_UNKNOWN];
+	optional TypeDef.HedgeType hedgeoperation = 10  [default = HEDGE_UNKNOWN]; 
+	optional TypeDef.PriceModeType pricemode = 11  [default = PM_UNKNOWN]; 
+	optional TypeDef.Exchange exchangeid = 12  [default = EX_UNKNOWN];
+	optional string account = 13;
+	optional int32 ordertime = 18;
+	optional int32 tradetime = 19;
+	optional string emsorderid = 21;
+	
+	//for internal use
+	optional int64 orderid = 14 [default = -1];
+	optional int64 jobid = 15 [default = -1];
+	optional TypeDef.ErrorType errorcode = 16;
+	optional TypeDef.SecurityType securitytype = 17;
+	optional bytes securityname = 20;
+	optional string tag = 22; //job下达之后的备注
+
+}
+
+/* 1.InsertOrder
+  
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::INSERTORDER
+  Carrier.message = <InsertOrder>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::INSERTORDERREP
+  Carrier.message = <InsertOrderRep>
+*/
+  
+message InsertOrder
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+    optional string stockaccount = 3;
+    optional string	securityid = 4;
+	optional TypeDef.BuySell buyselldir = 5 [default = BS_INVALID];
+	optional double price = 6;
+	optional int64 volume = 7; 
+	optional TypeDef.OpenCloseType opencloseflag = 8 [default = OC_UNKNOWN];
+	optional TypeDef.HedgeType hedgeoperation = 9  [default = HEDGE_UNKNOWN]; 
+	optional TypeDef.PriceModeType pricemode = 10  [default = PM_UNKNOWN]; 
+	optional TypeDef.Exchange exchangeid = 11  [default = EX_UNKNOWN];
+    optional string order_service_id = 12;
+    optional int32 action_id = 13;
+    optional string ordercompany_id = 14;
+    optional string portfolio_id = 15;
+	optional int64 batchno = 16;
+	optional string	emsorderid = 17;
+	optional string tag = 18;
+	optional int64 jobid = 19;
+}
+
+message InsertOrderRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN];
+	optional string orderno = 2; 
+	optional bytes error = 3;
+	optional int64 reqid = 4;
+	optional TypeDef.ErrorType errorcode = 6;
+    optional string order_service_id = 7;
+    optional int32 action_id = 8;
+	optional string	emsorderid = 9;
+}
+
+/* 2. CancelOrder
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::CANCELORDER
+  Carrier.message = <CancelOrder>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::CANCELORDERREP
+  Carrier.message = <CancelOrderRep>
+*/
+
+message CancelOrder
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+    optional string	securityid = 3;
+	optional int64 cancelvolume = 4; 
+	optional string	orderno = 5;
+	optional TypeDef.Exchange exchangeid = 6  [default = EX_UNKNOWN];
+    optional string order_service_id = 7;
+    optional int32 action_id = 8;
+	optional int64 batchno = 9;
+	optional string	emsorderid = 10;
+}
+
+message CancelOrderRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN];
+	optional string orderno = 2; 
+	optional bytes error = 3;
+	optional int64 reqid = 4;
+	optional TypeDef.ErrorType errorcode = 5;
+    optional string order_service_id = 6;
+    optional int32 action_id = 7;
+	optional string	emsorderid = 8;
+}
+
+/* 3. QueryOrder
+
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYORDER
+  Carrier.message = <QueryOrder>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYORDERREP
+  Carrier.message = <QueryOrderRep>
+*/
+
+message QueryOrder
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+    optional string	securityid = 3;
+	optional string	orderno = 4;
+	optional TypeDef.Exchange exchangeid = 5  [default = EX_UNKNOWN];
+    optional string order_service_id = 6;
+    optional int32 action_id = 7;
+	optional string	emsorderid = 8;
+}
+
+message QueryOrderRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	repeated OrderInfo items = 4;
+	optional bool isfinal = 5 [default = false]; //indicate it is the final message for the query request
+	optional TypeDef.ErrorType errorcode = 6;
+	optional string account = 7;
+    optional string order_service_id = 8;
+    optional int32 action_id = 9;
+	optional string	emsorderid = 10;
+}
+
+/* 4. Login
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = LOGIN
+  Carrier.message = <Login>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = LOGINREP
+  Carrier.message = <LoginRep>
+*/
+
+message Login
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+        optional string user = 3;
+}
+
+message LoginRepInfo
+{
+	optional TypeDef.Exchange exchange = 1  [default = EX_UNKNOWN];
+	optional string exchangename = 2;
+	optional string mainflag= 3;
+	optional string stockaccount = 4;
+	optional string account = 5;
+	optional TypeDef.CurrencyType currency = 6 [default = CURRENCY_UNKNOWN];
+	optional bytes currencyname = 7;
+}
+
+message LoginRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; 
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	optional string account = 4;
+	repeated LoginRepInfo items = 5;
+	optional TypeDef.ErrorType errorcode = 6;
+	optional TypeDef.SecurityProviderEnum securityprovider = 7 [default = PROVIDER_UNKNOWN];
+    optional TypeDef.SecurityType securitytype = 8 [default = SECURITY_UNKNOWN];
+	optional TypeDef.AuthType authtype = 9 [default = NORMAL];
+}
+
+/* 5. QueryPosition
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYPOSITION
+  Carrier.message = <QueryPosition>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYPOSITIONREP
+  Carrier.message = <QueryPositionRep>
+  
+  Note: if to query all positions under certain account, don't need to specify securityid and exchangeid
+*/
+
+message QueryPosition
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+	optional string securityid = 3;
+	optional TypeDef.Exchange exchangeid = 4  [default = EX_UNKNOWN]; 
+	optional string userid = 5;
+}
+
+message QueryCompressPosition
+{
+	optional string account = 1;
+	optional int64 reqid = 2;
+}
+
+message PositionInfo
+{
+	//common 
+    optional string securityid = 1;         //股票代码
+    optional TypeDef.Exchange exchange = 2  [default = EX_UNKNOWN];  //交易所/市场
+	optional string account = 3;
+    optional int64 position = 4 [default = 0];  //持仓
+    optional int64 available = 5 [default = 0]; //volumes eligible to sell or close 可用持仓
+    optional double positiongain = 6 [default = 0.0];   //持仓盈亏
+    optional double positionprice = 7 [default = 0.0];  //持仓价
+	optional double alpha = 8 [default = 0.0];
+	optional double beta = 9 [default = 0.0];
+	optional double brokerage = 10 [default = 0.0];	//费用
+	optional double tdgain = 11 [default = 0.0];    //日内盈亏
+    optional double mktval = 12 [default = 0.0];    //市值
+    optional double gainratio = 13;     //盈亏比例  
+    optional bytes securityname = 14;   //股票名称
+    optional double lastprice = 15 [default = 0.0]; //最新价格
+    optional string profitmsg = 16;
+    optional double closegain = 18;   //平仓盈亏
+	
+	//stock only
+    optional string stockaccount = 17;   //股东帐户
+	
+	//future only
+    optional double frozenmargin = 19;  //占用保证金
+    optional TypeDef.LongShortType longshortflag = 20  [default = LONGSHORT_UNKNOWN];    //多空标志
+    optional int64 todayposition = 21 [default = 0];    //今持仓
+    optional TypeDef.SecurityType securitytype = 22 [default = SECURITY_UNKNOWN];    //账户类型
+	optional int64 yesterdayposition = 23 [default = 0];    //昨仓
+
+	//option only
+	optional double premium = 24;//期权权利金
+	optional double buymargin = 25;//期权买入保证金
+	optional double holdmargin = 26;//期权维持保证金
+	optional double delta = 27;
+	optional double gamma = 28;
+	optional double vega = 29;
+	optional double theta = 30;
+	optional double rho = 31;
+	optional TypeDef.OptDirect optdirect = 32;//期权持仓方向
+	optional TypeDef.OptContractType contracttype = 33;//期权合约类型
+
+	//stock only
+	optional double floatprofit = 34 [default = 0.0];  //浮动盈亏
+	optional double realizedprofit = 35 [default = 0.0]; //已实现盈亏
+	optional int64 tdbuyvolume = 36 ; //当日买入成交数量
+	optional int64 tdsellvolume = 37 ; //当日卖出成交数量
+
+	//T0 only
+	optional int64 t0available = 38 [default = 0]; //T0分券可用持仓
+
+	optional double prevclose = 39 [default = 0.0]; //昨收价
+	optional double tdbuybal = 40 ; //当日买入成交金额
+	optional double tdsellbal = 41 ; //当日卖出成交金额
+
+    //stock only
+    optional int64 beginposition = 42 [default = 0];  //期初持仓数量
+}
+
+message QueryPositionRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	repeated PositionInfo items = 4;
+	optional bool isfinal = 5 [default = false]; //indicate it is the final message for the query request
+	optional TypeDef.ErrorType errorcode = 6;
+	optional string account = 7;
+}
+
+/* 6. QueryTrade
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYTRADE
+  Carrier.message = <QueryTrade>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYTRADEREP
+  Carrier.message = <QueryTradeRep>
+*/
+
+message QueryTrade
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+	optional string securityid = 3;
+	optional string orderno = 6;
+	optional TypeDef.Exchange exchangeid = 4  [default = EX_UNKNOWN]; 
+	optional string	emsorderid = 5;
+	optional string querypos = 7;
+	optional string userid = 8;
+}
+
+message TradeInfo
+{
+	//commmon
+	optional string securityid = 1;
+	optional TypeDef.Exchange exchangeid = 2  [default = EX_UNKNOWN];
+	optional string account = 3;
+	optional string tradeid = 4;
+	optional string orderno = 5;	
+	optional double price = 6;
+	optional int64 volume = 7;
+	optional int64 tradetime = 8;
+	optional bytes securityname = 13;
+	optional TypeDef.BuySell buyselldir = 10  [default = BS_INVALID];
+	optional string	emsorderid = 14;
+	optional TypeDef.TradeType tradetype = 15;
+	optional string querypos = 16;
+	optional bool isquerybak = 18 [default = false];
+	//stock only
+	optional string stockaccount = 9;
+	
+	//future only
+	optional TypeDef.OpenCloseType opencloseflag = 11  [default = OC_UNKNOWN];
+	optional TypeDef.HedgeType hedgeflag = 12  [default = HEDGE_UNKNOWN];
+
+	optional string tag = 19;
+	optional double matchvalue = 20;
+}
+
+message QueryTradeRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	repeated TradeInfo items = 4;
+	optional bool isfinal = 5 [default = false]; //indicate it is the final message for the query request
+	optional TypeDef.ErrorType errorcode = 6;
+	optional string account = 7;
+	optional string	emsorderid = 8;
+	optional string tag = 9;
+}
+
+/* 6. QueryAccount
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYACCOUNT
+  Carrier.message = <QueryAccount>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYACCOUNTREP
+  Carrier.message = <QueryAccountRep>
+*/
+
+message QueryAccount
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+	optional TypeDef.Exchange exchangeid = 3  [default = EX_UNKNOWN]; 
+	optional string userid = 4;
+}
+
+message AccountBusiness
+{
+    //commmon
+    optional string account = 1;
+    optional TypeDef.SecurityType securitytype = 2 [default = SECURITY_UNKNOWN];
+    optional double currbalance = 3; //当前余额
+    optional double available = 4;   //可用余额
+    optional double mktval = 5;      //持仓市值
+    optional double asset = 6 [default = 0.0];  //账户总资产
+    optional double tdgain = 7;
+    optional double positiongain = 8;
+    optional double closegain = 9;
+    optional int64 poscount = 10;
+    optional double alpha = 11;
+    optional double beta = 12;
+		
+    //future only
+    optional double currmargin = 13; //占用保证金
+    optional double hedgemktval= 14; //for hedge with future
+    optional double riskratio= 15; //for hedge with future
+	
+    //credit only
+    //融资 FL——Financing Lending
+    //融券 SL——Securities Lending
+    //optional double currbalance = 3; //当前余额,已定义
+    //optional double available = 4;   //可用余额,已定义
+    //optional double mktval = 5;      //持仓市值,已定义
+    //optional double asset = 6;       //账户总资产,已定义
+    //optional double currmargin = 13; //保证金可用余额,已定义
+    optional double fl_rate = 16;        //融资利率
+    optional double sl_rate = 17;        //融券利率
+    optional double marginrate = 18;         //维持担保比例
+    optional double realrate = 19;           //实时担保比例
+    optional double fl_totaldebts = 20;      //融资负债合计
+    optional double sl_totaldebts = 21;      //融券负债合计
+    optional double totaldebts = 22;         //总负债
+
+    //option only
+    optional double premium = 24;
+    optional double buymargin = 25;
+    optional double holdmargin = 26;
+    optional double delta = 27;
+    optional double gamma = 28;
+    optional double vega = 29;
+    optional double theta = 30;
+    optional double rho = 31;
+
+    //T0 only
+    optional double t0available = 32;   //T0分券可用余额
+	optional string t0stoptradetime = 33;   //set T0 stop trade time (except offset trade/平仓)
+}
+
+message QueryAccountRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	optional bool isfinal = 4 [default = false]; //indicate it is the final message for the query request
+	optional TypeDef.ErrorType errorcode = 5;
+
+	//data
+	optional AccountBusiness data = 6;
+}
+
+message ModifyPwd
+{
+	optional int64 reqid = 1;
+	optional AccountInfo accountinfo = 2;
+	optional string newpwd = 3;
+}
+
+message ModifyPwdRep
+{
+	optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; 
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	optional string account = 4;
+}
+
+/* 7. SystemLogin
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::SYSTEMLOGIN
+  Carrier.message = <SystemLogin>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::SYSTEMLOGINREP
+  Carrier.message = <SystemLoginRep>
+*/
+
+message SystemLogin
+{
+    optional string account = 1;
+	optional string password = 2;
+	optional string mac = 3;
+	optional string ip = 4;
+	optional string disk_seq = 5;
+	optional int64 reqid = 6;
+}
+
+message SystemLoginRep
+{
+    optional string account = 1;
+	optional int64 reqid = 2;
+	optional TypeDef.ReqStatus status = 3 [default = REQ_UNKNOWN];
+	optional bytes error = 4;
+}
+
+/* 8. QueryAcctInfo
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYACCTINFO
+  Carrier.message = <QueryAcctInfo>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYACCTINFOREP
+  Carrier.message = <QueryAccotInfoRep>
+*/
+
+message QueryAcctInfo
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+	optional TypeDef.Exchange exchangeid = 3  [default = EX_UNKNOWN]; 
+}
+
+message AcctInfoBusiness
+{
+	//commmon
+	optional string account = 1;
+	optional TypeDef.SecurityType securitytype = 2 [default = SECURITY_UNKNOWN];  //交易账户类别	
+	optional AccountInfo accountinfo 				= 3; //账户信息
+	optional string custcode 					= 4; //客户信息
+	optional TypeDef.Exchange exchangeid		= 5; //交易市场	
+	optional string stkbd 						= 6; //交易板块	
+	optional string stockaccount 					= 7; //证券账户---股东账户	
+	optional string account_sub 					= 8; //证券账户子编码	
+	//opt only
+	optional string account_opt 					=  9; //期权合约账户	
+	optional int64 account_opt_lvl					= 10; //期权账户级别
+                     			
+	optional int64 trdacct_sn 						= 11; //账户序号	
+	optional string trdacct_exid 					= 12; //报盘账户	
+	optional string trdacct_status 					= 13; //账户状态	
+	optional string treg_status 					= 14; //指定状态	
+	optional string breg_status 					= 15; //回购状态	
+	optional string stkpbu 							= 16; //交易单元	
+	optional string id_type 						= 17; //证件类型	
+	optional string id_code 						= 18; //证件号码	
+	optional string cust_name 						= 19; //客户名称	
+	//opt only                        		          
+	optional int64 opt_margin_sn 					= 20; //保证金比例模板编号	
+	optional int64 quota_val 						= 21; //买入额度						
+	optional int64 quota_val_used 					= 22; //占用买入额度				
+	optional string op_flag 						= 23; //操作标志						
+	optional int64 daily_enqry_count 				= 24; //当日询价次数				               
+}
+
+message QueryAccotInfoRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	optional bool isfinal = 4 [default = false]; //indicate it is the final message for the query request
+	optional TypeDef.ErrorType errorcode = 5;
+
+	//data
+	repeated AcctInfoBusiness data = 6;
+}
+
+/* 9. TransferInAndOut
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::TRANSFERINANDOUT_REQ
+  Carrier.message = <TransferInAndOut>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::TRANSFERINANDOUT_RSP
+  Carrier.message = <TransferInAndOutRep>
+*/
+message TransferInfo
+{
+	optional TypeDef.TransferInAndOutType transfertype = 1 [default = TIAOT_UNKNOWN_TYPE];
+	optional string typedescription = 2;
+	optional TypeDef.Exchange exchange = 3  [default = EX_UNKNOWN];
+	optional string exchangename = 4;
+	optional string remarks = 5; //说明
+	optional TypeDef.CurrencyType currency = 6 [default = CURRENCY_UNKNOWN];
+	optional bytes currencyname = 7;
+	optional double capitalvalue = 8; //资金额
+	optional string securityid = 9; //证券代码
+	optional int64 volume = 10; //证券数量
+}
+
+message TransferInAndOut
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+	optional TransferInfo transfer = 3;
+}
+
+message TransferInAndOutRep
+{
+	optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; 
+	optional bytes error = 2;
+	optional int64 reqid = 3;
+	optional string account = 4;
+	optional TypeDef.TransferInAndOutType transfertype = 5 [default = TIAOT_UNKNOWN_TYPE];
+	optional string serialnumber = 6;//流水号
+	optional double balance_current = 7;//当前余额
+	optional double balance_available = 8;//可用余额
+	optional double balance_tplus2 = 9;//T+2可用余额
+	optional int64 position_current = 10;//今持仓量
+	optional int64 position_available = 11;//可用数量
+}

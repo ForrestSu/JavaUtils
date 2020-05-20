@@ -1,0 +1,638 @@
+package com.sunquan.zmqproto;
+
+option java_package = "com.sunquan.zmqproto";
+option java_outer_classname = "TypeDefClass";
+
+message TypeDef
+{
+	enum AuthType
+	{
+		NORMAL = 1;
+		WARNING = 2;
+		END = 3;
+	}
+
+	enum EmsEditType
+	{
+		EMS_ADD = 1;
+		EMS_DEL = 2;
+		EMS_MDF = 3;
+		EMS_MDFPWD = 4;
+	}
+
+    enum PortfolioEditType
+    {
+        PTE_ADD     = 1;
+        PTE_DEL     = 2;
+    }
+
+    enum PortfolioItemEditType
+    {
+        PTIE_ADD     = 1;
+        PTIE_DEL     = 2;
+        PTIE_MDF     = 3;
+    }
+
+	enum ProfitType
+	{
+		PT_SECOND = 1; //秒级别
+		PT_MINUTE = 2; // 分钟级别
+	}
+
+    enum ConnectType
+    {
+        CT_STRAIGHT          = 1;    //直连
+        CT_GATEWAYPROXY      = 2;    //代理
+        CT_UNKNOWN         = 3;    //其它
+    }
+
+    enum UserRole
+    {
+            UR_SUPERADMIN     = 0;    //券商管理员
+            UR_ADMIN          = 1;    //机构管理员
+            UR_DEALER         = 2;    //交易员
+            UR_RISKCHECKER    = 3;    //风控员
+            UR_MONITOR        = 4;    //查询监控员
+            UR_INVEST_ADVISER = 6;    //投顾角色
+            UR_INVEST_MANAGER = 7;    //投资经理
+            UR_T0ADMIN        = 8;    //分券管理员
+            UR_SUPERMAINTAINER= 9;    //券商运维员
+            UR_UNKNOWN        = 5;    //其它
+    }
+
+    enum UserStatus             //用户状态
+    {
+        US_ACTIVE       = 1;    //正常
+        US_FROZEN       = 2;    //冻结
+        US_CLOSE        = 3;    //注销
+    }
+
+    enum UserCertificate             //证件信息
+    {
+        UC_UNKNOWN            = 0;    //其他
+        UC_Certificate        = 1;    //身份证
+        UC_ORGANIZATION       = 2;    //机构代码
+    }
+
+    enum ProdStatus             //产品状态
+    {
+        PS_ACTIVE       = 1;    //正常
+        PS_FROZEN       = 2;    //冻结
+        PS_CLOSE        = 3;    //注销
+    }
+
+	enum QueryTradeType
+	{
+		QTT_ORDERNO  = 1;
+		QTT_TIME = 2;
+		QTT_QUERYPOS = 3;
+	}
+
+	enum OptContractType
+	{
+		OCT_CALL = 1;
+		OCT_PUT = 2;
+	}
+
+	enum OptDirect
+	{
+		OD_RIGHT_POS = 1;
+		OD_DUTY_POS = 2;
+		OD_COVERED_POS = 3;
+	}
+
+	enum Exchange
+	{
+		option allow_alias = true;
+		EX_UNKNOWN = 0;
+		EX_SH = 1; //上交所
+		EX_SZ = 2; //深交所
+		EX_CF = 3;   //中金所
+		EX_HK = 7;		// 香港联交所
+		EX_SHFE = 4;   //"上海期货交易所";
+		EX_DCE = 5;   //"大连商品交易所";
+		EX_CZCE = 6;   //"郑州商品交易所";
+		EX_CTP = 8; //综合商品期货.
+	}
+	  
+	enum BuySell
+	{
+		option allow_alias = true;
+		BS_INVALID = 0;
+		BS_BUY = 1; //买入
+		BS_SELL = 2; //卖出
+		BS_BOTH = 3; 
+		BS_PURCHASE = 4; //申购
+		BS_REDEEM = 5; //赎回
+		BS_BWT_MKT_PURCHASE = 6;
+		BS_BWT_MKT_REDEEM = 7;
+		BS_BWT_ENV_PURCHASE = 8;
+		BS_BWT_ENV_REDEEM = 9;
+		BS_FS_CO_BUY = 10;		// 担保品买入
+		BS_FS_CO_SELL = 11;		// 担保品卖出
+		BS_FS_FL_BUY = 12;		// 融资买入
+		BS_FS_FL_SELL = 13;		// 卖券还款
+		BS_FS_SL_BUY = 14;		// 买券还券
+		BS_FS_SL_SELL = 15;		// 融券卖出
+		BS_BUY_OPEN = 16;	// 开多
+		BS_SELL_CLOSE = 17; // 平空
+		BS_SELL_OPEN = 18;  // 开空
+		BS_BUY_CLOSE = 19;  // 平多
+		BS_OPT_BUY_OPEN   = 20;  // 期权买入开仓	
+		BS_OPT_SELL_CLOSE = 21;  // 期权卖出平仓
+		BS_OPT_SELL_OPEN  = 22;  // 期权卖出开仓
+		BS_OPT_BUY_CLOSE  = 23;  // 期权买入平仓
+		BS_OPT_CVD_OPEN   = 24;  // 期权备兑开仓
+		BS_OPT_CVD_CLOSE  = 25;  // 期权备兑平仓
+		BS_OPT_RIGHT_GET  = 26;  // 期权认购行权
+		BS_OPT_RIGHT_PUT  = 27;  // 期权认沽行权
+		BS_REPO_FL 	= 28;	// 融资回购
+		BS_REPO_SL	= 29;	// 融券回购
+	}
+	  
+	enum OpenCloseType
+	{
+		option allow_alias = true;
+		OC_UNKNOWN = -1;
+		OPEN = 0;
+		CLOSE = 1;
+		CLOSE_TODAY = 2;
+		CLOSE_YESTODAY = 3;
+		FORCE_CLOSE = 4;
+	}
+	
+	enum HedgeType
+	{
+		option allow_alias = true;
+		HEDGE_UNKNOWN = 0;
+		SPECULATION = 1;
+		ARBITRAGE = 2; 
+		HEDGE = 3;
+	}
+	
+	enum PriceModeType
+	{
+		option allow_alias = true;
+		PM_UNKNOWN = 0;
+		LIMIT_PRICE = 1;
+		LAST_PRICE = 2;
+		MARKET_PRICE = 3;
+		MARKET_PRICE_THIS_SIDE = 4;
+		MARKET_PRICE_THAT_SIDE = 5;
+		MARKET_PRICE_CANCEL_REST = 6;
+		MARKET_PRICE_LIMITED_REST = 7;
+	}
+
+	enum ReqStatus
+	{
+		option allow_alias = true;
+		REQ_UNKNOWN = 0;
+		SUCCESS = 1;
+		FAILURE = 2;
+	}
+
+	enum OrderStatus
+	{
+		option allow_alias = true;
+		STATUS_UNKNOWN = 1;
+		PENDING = 2;		//挂单
+		PARTTRADED = 3;		//部成
+		CANCELLED = 4;		//撤单
+		REJECTED = 5;		//废单
+		ALLTRADED = 6;		//全部成交
+		ONTRADED = 7;
+		INSERT_FAILED = 8;
+        INSERT_REJECT = 9;
+		CANCELLING    = 10;	//正在撤单
+        INSERTED      = 11;
+	}
+
+	enum MarketDataType
+	{
+		option allow_alias = true;
+		MD_UNKNOWN = 1;
+		ALL = 2;
+		UPDATE = 3;
+	}
+	
+	enum SecurityStatus
+	{
+		option allow_alias = true;
+		SECURITY_READY = 1;
+		SECURITY_UPLIMIT = 2;
+		SECURITY_DOWNLIMIT = 3;
+		SECURITY_SUSPENDED = 4; 
+	}
+		
+	enum TraderCommandType
+	{
+		option allow_alias = true;
+		TC_UNKNOWN = -1;
+		PAUSEJOB = 0;
+		REPLAYJOB = 1;
+		ENDJOB = 2;
+		ACCEPT_APPROVE = 3;	// 审批通过
+		REJECT_APPROVE = 4;	// 审批驳回
+		CONFIRM_EXECUTE = 5; // 确认执行
+		REJECT_EXECUTE = 6;	 // 拒绝执行
+	}
+
+	enum SecurityProviderEnum
+	{
+		option allow_alias = true;
+		PROVIDER_UNKNOWN = 0;
+		PROVIDER_CTP_FUTURES = 1; //CTP
+		PROVIDER_XTP_SECURITIES = 2; //中泰XTP
+		PROVIDER_EVERBRIGHT_FUTURES = 3; 
+		PROVIDER_JINZHENG_SECURITIES = 4; //金证
+		PROVIDER_GALAXY_FUTURES = 5; 
+		PROVIDER_APEX_SECURITIES = 6; //顶点
+		PROVIDER_ZHONGRONG = 7; 
+		PROVIDER_HANDSUN = 8; //恒生o32
+		PROVIDER_MINGCE = 9; //名策模拟
+		PROVIDER_MINGCE_FUTURES = 10; //名策期货模拟
+		PROVIDER_SHZHENG_SECURITIES = 11; //深圳通
+		PROVIDER_GUANGDA_SECURITIES = 12; //光大
+		PROVIDER_HUIANKINGDOM_SECURITIES = 13; //金证惠安
+		PROVIDER_EBROKER_SECURITIES = 14; 
+		PROVIDER_JINZHENG_CREDIT = 15; //金证信用
+		PROVIDER_HANDSUN08 = 16; //恒生UFX
+		PROVIDER_APEX_CREDIT = 17; //顶点信用
+		PROVIDER_JINZHENG_OPTION = 18; //金证期权
+		PROVIDER_SYNCBP_TOPTRADE = 19; //同步BP名策模拟
+		PROVIDER_HANDSUN08_OPTION = 20;//恒生UFX期权
+		PROVIDER_HANDSUN08_CREDIT = 21;//恒生UFX信用
+		PROVIDER_HANDSUN_PBOX = 22;//恒生Pbox
+		PROVIDER_CTP_MINI2_FUTURES = 23;//CTP_MINI2期货
+	}
+	
+	enum SecurityType
+	{
+		option allow_alias = true;
+		SECURITY_UNKNOWN = 0;
+		SECURITY_FUTURE = 1; //期货账户
+		SECURITY_STOCK = 2; //股票账户
+        SECURITY_CREDIT = 3; //信用账户
+        SECURITY_OPTION = 4; //期权账户
+	}
+	
+	enum CurrencyType
+	{
+		option allow_alias = true;
+		CURRENCY_UNKNOWN = 0;
+		CURRENCY_RMB = 1;
+		CURRENCY_US = 2;
+		CURRENCY_HK = 3;
+	}
+	
+	enum LongShortType
+	{
+		option allow_alias = true;
+		LONGSHORT_UNKNOWN = 0;
+		LONGSHORT_NET = 1;
+		LONGSHORT_LONG = 2;
+		LONGSHORT_SHORT = 3;
+	}
+
+	enum HedgeStateEnum
+	{
+		option allow_alias = true;
+		HEDGESTATE_UNKNOWN = 0;
+		HEDGESTATE_ERROR = 1;
+		HEDGESTATE_LONGEXPOSUREEXCESS=2;
+		HEDGESTATE_SHORTEXPOSUREEXCESS=3;
+		HEDGESTATE_EXTENDFINISHED=4;
+		HEDGESTATE_HEDGEFINISHED=5;
+		HEDGESTATE_HEDGESTOP = 6;
+	}
+	
+	enum ErrorType
+	{
+		option allow_alias = true;
+		ERROR_UNKNOWN = 0;
+		ERROR_NONE = 1;
+		ERROR_CONNECTION_DOWN = 2;
+		ERROR_FAILED_TO_SEND = 3;
+		ERROR_FAILED_TO_DECODE_PROTOBUF = 4;
+		ERROR_NO_ORDER_NO = 5;
+		ERROR_WRONG_PARAMETER = 7;
+		ERROR_WRONG_PARAMETER_INVALID_VOL = 8;
+		ERROR_WRONG_PARAMETER_NO_ACCOUNTINFO = 9;
+		ERROR_WRONG_PARAMETER_NO_PASSWORD = 10;
+		ERROR_WRONG_PARAMETER_WRONG_PASSWORD = 11;
+		ERROR_WRONG_PARAMETER_NO_SEC_TYPE= 12;
+		ERROR_WRONG_PARAMETER_WRONG_SEC_TYPE= 13;
+		ERROR_WRONG_PARAMETER_NO_SEC_PROVIDER = 14;
+		ERROR_WRONG_PARAMETER_WRONG_SEC_PROVIDER = 15;
+		ERROR_WRONG_PARAMETER_NO_SEC_BRANCH_NO = 16;
+		ERROR_WRONG_PARAMETER_WRONG_SEC_BRANCH_NO = 17;
+		ERROR_WRONG_PARAMETER_NO_STK_ACCOUNT = 18;
+		ERROR_WRONG_PARAMETER_WRONG_STK_ACCOUNT = 19;
+		ERROR_WRONG_PARAMETER_WRONG_BUYSELL = 20;
+		ERROR_WRONG_PARAMETER_WRONG_OPENCLOSE = 21;
+		ERROR_WRONG_PARAMETER_WRONG_ORDERSETTINGS = 21;
+		ERROR_WRONG_PARAMETER_WRONG_ALGO_TYPE = 21;		
+		ERROR_NOT_LOGIN = 30;
+		ERROR_UNSUPPOTED = 31;
+		ERROR_NOT_AVAILABLE = 32;
+		ERROR_RISK_ORDER_CHECK_FAILED = 33;
+		ERROR_FAILED_TO_CANCELORDER = 34;
+		ERROR_FAILED_TO_INSERTORDER = 35;
+		ERROR_FAILED_TO_QUERYORDER = 36;
+		ERROR_FAILED_TO_QUERYTRADE = 37;
+		ERROR_FAILED_TO_QUERYACCOUNT = 38;
+		ERROR_FAILED_TO_QUERYPOSITION = 39;
+        ERROR_NO_DIVIDE_STOCK_DATA = 40;
+	}
+	
+	enum AlgoType
+	{
+		option allow_alias = true;
+		ALGO_UNKNOWN = 0;
+		ALGO_TWAP = 1;
+		ALGO_VWAP = 2;
+	}
+	
+	enum SpeedOpionType
+	{
+		option allow_alias = true;
+		SPEEDOPTION_UNKNOWN = -1;
+		SPEEDOPTION_NORMAL = 0;
+		SPEEDOPTION_AIM = 1;
+		SPEEDOPTION_PIM = 2;
+	}
+	
+	enum MarketStyleType
+	{
+		UNKNOWN_MARKET_STYLE = 0;
+		LARGER_CAP_SHARE = 1;
+		SMALL_MEDIUM_CAP_SHARE = 2;
+	}
+	
+	enum IndexStatusType
+	{
+		OpenHighGoHighSoleUp = 1;
+		OpenLowGoHighCloseHigher = 2;
+		OpenHighGoLowCloseHigher = 3;
+		OpenLowUnderBaseCloseLower = 4;
+		OpenHighGoLowCloseLower = 5;
+		OpenLowGoLowSoleDown = 6;
+	}
+	
+	enum JobStatusType
+	{
+		option allow_alias = true;
+		JOBSTATUS_UNKNOWN = -1;
+		JOBSTATUS_WAIT_RISK = 0;
+		JOBSTATUS_READY = 1;			//ready but not started
+		JOBSTATUS_RUNNING = 2;		//
+		JOBSTATUS_PAUSE_TRADER = 3;	//paused by trader
+		JOBSTATUS_PAUSE_NOON = 4;		//paused from 11:30am-1:00pm
+		JOBSTATUS_PAUSE_SUSPENDED = 5; //paused due to suspension
+		JOBSTATUS_PAUSE_UPLIMIT = 6;	//paused due to reaching up limit
+		JOBSTATUS_PAUSE_DOWNLIMIT = 7;	//paused due to reaching low limit
+		JOBSTATUS_STOP = 8;			//stopped by trader
+		JOBSTATUS_END = 9;			//ended due to reaching time limit
+		JOBSTATUS_FINISHED = 10;		//planned volume is finished.
+		JOBSTATUS_PENDING = 11;		//before the begin time, pending to check risk.		
+		JOBSTATUS_WAIT_OI_SIGNAL = 12;	// wait for oi signal	// discard
+		JOBSTATUS_WAIT_APPROVE = 13; 		// wait approve
+		JOBSTATUS_APPROVE_REJECTED = 14;	// approve rejected
+		JOBSTATUS_WAIT_EXECUTE = 15;			// wair for execute
+		JOBSTATUS_EXECUTE_REJECTED = 16;		// execute rejected
+	}
+
+	enum HedgeStatusType
+	{
+		option allow_alias = true;
+		HEDGESTATUS_UNKNOWN = -1;
+		HEDGESTATUS_STOP = 0;
+		HEDGESTATUS_START = 1;			
+	}
+	enum HedgeParamType
+	{
+		option allow_alias = true;
+		HEDGEPARAM_UNKNOWN = -1;
+		HEDGEPARAM_HEDGE = 0;
+		HEDGEPARAM_STOCKACC = 1;	
+		HEDGEPARAM_FUTACC = 2;	
+	}
+	enum FlagType
+	{
+		UNKNOWN_FLAG = 0;
+		ST_STAR = 13005;
+		ST = 13004;
+		ISSUE_FAILED = 13009;
+		UNEXAMINE = 13008;
+		DEFER_ISSUE = 13011;
+		SUSPEND_IPO = 13003;
+		NORMAL_IPO = 13001;
+		DELIST_IPO = 13002;
+		ISSUED_UNLISTED = 13006;
+		PRE_ANNOUNCEMENT = 13007;
+		CLEANING_FOR_DELISTING = 13010;
+	}
+	
+	enum DetailSecurityType
+	{
+		UNKNOWN_SECURITY_TYPE = 0;
+		A_SHARES = 1001;
+		B_SHARES = 1002;
+		CLOSED_END_FUND = 3001;
+		OPENED_END_FUND = 3002;
+		LOF = 3003;
+		ETF = 3004;
+		COMPREHENSIVE_INDEX = 4001;
+		COMPONENT_INDEX = 4002;
+		SECTOR_INDEX = 4003;
+		STOCK_INDEX = 4004;
+		BOND_INDEX = 4005;
+		FUND_INDEX = 4006;
+		THEME_INDEX = 4007;
+		STYLE_INDEX = 4008;
+		STRATEGY_INDEX = 4010;
+		REST_INDEX = 4012;
+		STOCK_WARRANT = 5001;
+	}
+	
+	enum SectorType
+	{
+		ST_UNKNOWN_SECTOR_TYPE = 0;
+		ST_CONCEPT_OF_PLATE = 1;
+		ST_NEW_SW_LEVEL_INDUSTRY = 2;
+		ST_STYLE_INDEX =3;
+	}
+	
+	enum PositionPriceType
+	{
+		PPT_UNKNOWN_TYPE = -1;
+		PPT_NEWEST_PRICE = 0;
+		PPT_BENCHMARK_PRICE = 1;
+		PPT_LIMIT_PRICE = 2;
+	}
+	
+	enum OpenSlippageType
+	{
+		OST_UNKNOWN_TYPE 				= -1;
+		OST_ZERO 								= 0;
+		OST_SELL_ONE_PRICE 			= 1;
+		OST_SELL_TWO_PRICE 			= 2;
+		OST_SELL_THREE_PRICE 		= 3;
+		OST_SELL_FOUR_PRICE 		= 4;
+		OST_SELL_FIVE_PRICE 		= 5;
+		OST_SELL_SIX_PRICE 			= 6;
+		OST_SELL_SEVEN_PRICE 		= 7;
+		OST_SELL_EIGHT_PRICE 		= 8;
+		OST_SELL_NINE_PRICE 		= 9;
+		OST_SELL_TEN_PRICE 			= 10;
+		OST_BID_ONE_PRICE				= 11;
+		OST_BID_TWO_PRICE				= 12;
+		OST_BID_THREE_PRICE			= 13;
+		OST_BID_FOUR_PRICE			= 14;
+		OST_BID_FIVE_PRICE			= 15;
+		OST_BID_SIX_PRICE				= 16;
+		OST_BID_SEVEN_PRICE			= 17;
+		OST_BID_EIGHT_PRICE			= 18;
+		OST_BID_NINE_PRICE			= 19;
+		OST_BID_TEN_PRICE				= 20;
+		OST_LIMITED_HIGH_PRICE	= 21;//涨停价
+		OST_CURR_PRICE 					= 22;
+		OST_LIMITED_LOW_PRICE		= 23;//跌停价
+	}
+	
+	enum CloseSlippageType
+	{
+		CST_UNKNOWN_TYPE 				= -1;
+		CST_ZERO 								= 0;
+		CST_BID_ONE_PRICE 			= 1;
+		CST_BID_TWO_PRICE 			= 2;
+		CST_BID_THREE_PRICE 		= 3;
+		CST_BID_FOUR_PRICE 			= 4;
+		CST_BID_FIVE_PRICE 			= 5;
+		CST_BID_SIX_PRICE 			= 6;
+		CST_BID_SEVEN_PRICE 		= 7;
+		CST_BID_EIGHT_PRICE 		= 8;
+		CST_BID_NINE_PRICE 			= 9;
+		CST_BID_TEN_PRICE 			= 10;
+		CST_SELL_ONE_PRICE			= 11;
+		CST_SELL_TWO_PRICE			= 12;
+		CST_SELL_THREE_PRICE		= 13;
+		CST_SELL_FOUR_PRICE			= 14;
+		CST_SELL_FIVE_PRICE			= 15;
+		CST_SELL_SIX_PRICE			= 16;
+		CST_SELL_SEVEN_PRICE		= 17;
+		CST_SELL_EIGHT_PRICE		= 18;
+		CST_SELL_NINE_PRICE			= 19;
+		CST_SELL_TEN_PRICE			= 20;
+		CST_LIMITED_HIGH_PRICE	= 21;//涨停价
+		CST_CURR_PRICE 					= 22;
+		CST_LIMITED_LOW_PRICE		= 23;//跌停价
+	}
+
+	enum LFSignalType
+	{
+		LFST_UNKNOWN_TYPE = -1;
+		LFST_INDEX = 0;
+		LFST_STOCK = 1;
+	}
+
+	enum TradeType
+	{
+		TT_UNKNOWN	= 0;
+		TT_ENTRUST	= 1;
+		TT_CANCEL	= 2;
+	}
+
+
+        enum FSLend_SecurityType        //证券类型
+        {
+                FSLST_UNKNOWN = -1;
+                FSLST_FINANCING = 0;    //融资标的券
+                FSLST_SECURITIES = 1;   //融券标的券
+                FSLST_COLLATERAL = 2;   //担保券
+        }
+
+        enum FSLend_ContractType        //融资融券合约类型
+        {
+                FSLCT_UNKNOWN = -1;
+                FSLCT_FINANCING = 0;    //融资
+                FSLCT_SECURITIES = 1;   //融券
+        }
+
+        enum FSLend_ContractEditType    //合约编辑类型
+        {
+                FSLCET_UNKNOWN = -1;
+                FSLCET_ADD  = 0;     //添加
+                FSLCET_DEL  = 1;     //删除
+                FSLCET_MDFY = 2;     //更改
+        }
+
+        enum FSLend_ContractStatus        //融资融券合约状态
+        {
+                FSLCS_UNKNOWN       = -1;
+                FSLCS_NOTREPAY      = 0;    //开仓未归还
+                FSLCS_PARTIALREPAY  = 1;    //部分归还
+                FSLCS_EXPIRED       = 2;    //合约已过期
+                FSLCS_AUTOCLOSE     = 3;    //主动了结
+                FSLCS_MANUALCLOSE   = 4;    //手工了结
+                FSLCS_REALTIME      = 5;    //实时合约
+        }
+
+		// 产品管理类型
+		enum ProductManageType 
+		{
+			PRODUCT_MT_SELFMANAGE		= 0; // 自主管理
+			PRODUCT_MT_INVESTADVISER	= 1; // 投顾模式
+		}
+
+		//期权Delta最优化原则
+		enum DeltaOptimizeType
+		{
+			DOT_BEST_FLUIDITY = 0;//流动性最优
+			DOT_MAX_PREMIUM = 1;//权利金最大
+			DOT_MIN_VOLATILITY = 2;//波动率最小
+			DOT_MIN_MARGIN = 3;//保证金最小
+			DOT_MAX_GAMMA = 4;//Gamma最大
+			DOT_MIN_GAMMA = 5;//Gamma最小
+		}
+
+		//期权Hedge原则
+		enum OptHedgeType
+		{
+			OHT_PRIORITY_USE_MARGIN = 0;//优先使用保证金
+			OHT_MIN_PREMIUM = 1;//权利金最小
+			OHT_BEST_FLUIDITY = 2;//流动性最优
+			OHT_MAX_PREMIUM = 3;//权利金最大
+			OHT_MIN_VOLATILITY = 4;//波动率最小
+			OHT_MAX_GAMMA = 5;//Gamma最大
+			OHT_MIN_GAMMA = 6;//Gamma最小
+		}
+
+		//期权策略状态
+		enum OptionStrategyState
+		{
+			OSS_UNKNOWN = 0;
+			OSS_READY = 1;//准备运行
+			OSS_RUNNING = 2;//运行中
+			OSS_SUSPEND = 3;//暂停
+			OSS_TERMINATED = 4;//终止
+			OSS_CANCELED = 5;//撤单
+			OSS_COMPLETE = 6;//完成
+		}
+
+		//期权策略名
+		enum OptionStrategyName
+		{
+			OPT_COMBO = 1;
+			OPT_DELTA_HEDGE = 2;
+		}
+
+		enum TransferInAndOutType
+		{
+			TIAOT_UNKNOWN_TYPE = -1;
+			TIAOT_CAPITAL_IN = 0;//客户资金调入
+			TIAOT_CAPITAL_OUT = 1;//客户资金调出
+			TIAOT_SECURITY_IN = 2;//客户证券调入
+			TIAOT_SECURITY_OUT = 3;//客户证券调出
+		}
+}

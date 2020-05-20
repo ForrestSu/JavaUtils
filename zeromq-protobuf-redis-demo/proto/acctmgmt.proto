@@ -1,0 +1,336 @@
+package com.sunquan.zmqproto;
+
+import public "msgcarrier.proto";
+import public "typedef.proto";
+import public "tradingproxy.proto";
+
+option java_package = "com.sunquan.zmqproto";
+option java_outer_classname = "AcctmgmtClass";
+
+/* 1. Login
+  Request format:
+  <Carrier>
+  
+  where 
+	Carrier.type = MSGCARRIER::LOGIN
+	Carrier.message = <TRADINGPROXY::Login>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+	Carrier.type = MSGCARRIER::LOGINREP
+	Carrier.message = <TRADINGPROXY::LoginRep>
+*/
+
+/* 2. QueryAccount
+  Request format:
+  <Carrier>
+  
+  where 
+	Carrier.type = MSGCARRIER::QUERYACCOUNT
+	Carrier.message = <TRADINGPROXY::QUERYACCOUNT>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+	Carrier.type = MSGCARRIER::QUERYACCOUNTREP
+	Carrier.message = <TRADINGPROXY::QueryAccountRep>
+*/
+
+/* 3. PUBACCOUNTINFO
+  Pub format:
+  <"<account>.acctinfo">
+  <Carrier>
+
+  where 
+  Carrier.type = MSGCARRIER::PUBACCOUNTINFO
+  Carrier.message = <AccountBusiness>
+*/
+
+
+/* 4. QueryPosition
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYPOSITION
+  Carrier.message = <TRADINGPROXY::QueryPosition>
+  if codes is empty, all positions under the account will be returned
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYPOSITIONREP
+  Carrier.message = <TRADINGPROXY::QueryPositionRep>
+*/
+
+/* 5. PubPositions
+  Pub format:
+  <"<account>.pos">
+  <Carrier>
+  
+    <"<account>.posall">
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::PUBPOSITIONS
+  Carrier.message = <PubPositions>
+*/
+
+message PubPositions
+{
+	repeated PositionInfo items = 1;
+}
+
+/* 6. QueryPositionSummary
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYPOSITIONSUMMARY
+  Carrier.message = <QueryPositionSummary>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYPOSITIONSUMMARYREP
+  Carrier.message = <QueryPositionSummaryRep>
+*/
+
+/* 7. PUBAVAILABLE
+  Pub format:
+  <"<account>.available">
+  <Carrier>
+
+  where 
+  Carrier.type = MSGCARRIER::ACCOUNT_AVAILABLE_PUB
+  Carrier.message = <AvailableInfo>
+*/
+
+message QueryPositionSummary
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+}
+
+message SummaryInfo
+{
+	//commmon
+	optional string account = 15;
+	optional bytes industry = 1;
+	optional int64 position = 3  [default = 0];
+	optional double positiongain = 4  [default = 0.0];
+	optional double positionprice = 5  [default = 0.0];
+	optional double todayprofit = 6  [default = 0.0];
+	optional int64 securitiescount = 7 [default = 0];
+	optional double mktval = 8  [default = 0.0];
+	optional double alpha = 9;
+	optional double beta = 10;
+	
+	//future only
+	optional int64 todayposition = 11  [default = 0];	
+	optional int64 ydposition = 12  [default = 0];
+	optional double frozmargin = 13  [default = 0.0];
+	optional string code = 14;
+}
+
+message QueryPositionSummaryRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional TypeDef.ErrorType errorcode = 2;
+	optional int64 reqid = 3;
+	repeated SummaryInfo items = 4;
+	optional string account = 5;
+}
+
+/* 7. PubSummaries
+  Pub format:
+  <"<account>.possumm">
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::PUBPOSITIONSUMMARY
+  Carrier.message = <PubSummaries>
+*/
+
+message PubSummaries
+{
+	repeated SummaryInfo items = 1;
+}
+
+/* 8. QueryTrade
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYTRADE
+  Carrier.message = <TRADINGPROXY::QueryTrade>
+  if securityids are empty, all trades under the account will be returned.
+  account is compulsory
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYTRADESREP
+  Carrier.message = <TRADINGPROXY::QueryTradeRep>
+*/
+
+/* 9. PubTrades
+  Pub format:
+  <"<account>.trade">
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::PUBTRADES
+  Carrier.message = <PubTrades>
+*/
+
+message PubTrades
+{
+	repeated TradeInfo items = 1;
+}
+
+/* 10. QueryOrders
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYORDER
+  Carrier.message = <TRADINGPROXY::QueryOrder>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYORDERREP
+  Carrier.message = <TRADINGPROXY::QueryOrderRep>
+*/
+
+/* 11. PubOrders
+  Pub format:
+  <"<account>.order">
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::PUBORDERS
+  Carrier.message = <TRADINGPROXY::PubOrders>
+*/
+
+message PubOrders
+{
+	repeated OrderInfo items = 1;
+}
+
+/* 12. QueryTDProfit
+  Request format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYTDPROFIT
+  Carrier.message = <QueryTDProfit>
+  
+  Reply format:
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::QUERYTDPROFITREP
+  Carrier.message = <QueryTDProfitRep>
+*/
+
+message ProfitPoint
+{
+	optional int64 timepoint = 1 [default = 0];
+	optional double profit = 2 [default = 0.0];
+	optional string account = 3;
+}
+
+message QueryTDProfit
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+}
+
+message QueryTDProfitRep
+{
+    optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional TypeDef.ErrorType errorcode = 2;
+	optional int64 reqid = 3;
+	repeated ProfitPoint items = 4;
+	optional string account = 5;
+}
+
+/* 13. PubTDProfit
+  Pub format:
+  <"tdprofit.<account>">
+  <Carrier>
+  
+  where 
+  Carrier.type = MSGCARRIER::PUBTDPROFIT
+  Carrier.message = <PubTDProfit>
+*/
+
+message PubTDProfit
+{
+	repeated ProfitPoint items = 1;
+	optional TypeDef.ProfitType profittype = 2 [default = PT_SECOND];
+}
+
+message AvailableInfo
+{
+	optional string code = 1;
+	optional int64 position = 2 [default = 0];  //持仓
+    optional int64 available = 3 [default = 0]; //volumes eligible to sell or close 可用持仓
+	optional string account = 4;
+}
+
+
+message QueryAvailable
+{
+	optional AccountInfo accountinfo = 1;
+	optional int64 reqid = 2;
+}
+
+message QueryAvailableRep
+{
+	optional TypeDef.ReqStatus status = 1 [default = REQ_UNKNOWN]; //there would be no orders if the status is failure
+	optional TypeDef.ErrorType errorcode = 2;
+	optional int64 reqid = 3;
+	optional string account = 4;
+	repeated AvailableInfo items = 5;
+}
+
+message QueryAllAcountInfo
+{
+	optional int64 reqid = 1;
+}
+
+message QueryAllAcountInfoRep
+{
+	optional int64 reqid = 1;
+	repeated AccountBusiness items = 2;
+}
+
+message QueryNetValue
+{
+	optional int64 reqid = 1;	
+}
+
+message QueryNetValueRep
+{
+	optional int64 reqid = 1;	
+	repeated FundNetValue items = 2;
+}
+
+message FundNetValue
+{
+	optional string fundname = 1;
+	optional double netUnitValue = 2;
+	optional double share = 3;
+	optional double netAssetValue = 4;
+}
+
