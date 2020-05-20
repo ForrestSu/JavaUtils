@@ -25,7 +25,7 @@ public class MysqlConnect {
     /**
      * 获取Connection对象
      */
-    public void GetConnection() {
+    public void getConnection() {
         if (conn != null)
             return;
         try {
@@ -52,14 +52,14 @@ public class MysqlConnect {
         }
     }
 
-    public List<TableFields> QueryTableScheme(String db, String tableName) {
+    public List<TableFields> queryTableScheme(String db, String tableName) {
         List<TableFields> result = new ArrayList<>();
         String sql = "SELECT column_name, column_comment, upper(Data_TYPE) as type" +
                 " FROM information_schema.columns\n" +
                 " WHERE table_schema = '" + db + "'" +
                 " AND table_name = '" + tableName + "' ORDER BY ordinal_position;\n";
 
-        GetConnection();
+        getConnection();
         ResultSet rs = null;
         PreparedStatement pstm = null;
         try {
@@ -98,10 +98,10 @@ public class MysqlConnect {
     /**
      * 查询数据
      */
-    private void SelectData() {
+    private void selectData() {
         // 创建一个结果集对象
         ResultSet rs = null;
-        GetConnection();
+        getConnection();
         String sql = "SELECT id, name, code FROM t_institution";
         PreparedStatement pstm = null;
         try {
@@ -137,7 +137,7 @@ public class MysqlConnect {
 
     public static void main(String[] args) {
         // new MysqlConnector().SelectData();
-        new MysqlConnect().QueryTableScheme("xone_data", "t_institution");
+        new MysqlConnect().queryTableScheme("xone_data", "t_institution");
         System.out.println("Goodbye!");
     }
 }
