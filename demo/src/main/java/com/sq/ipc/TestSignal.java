@@ -4,7 +4,13 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class TestSingal {
+public class TestSignal {
+
+    private static int getProcessID() {
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        // System.out.println(runtimeMXBean.getName());
+        return Integer.parseInt(runtimeMXBean.getName().split("@")[0]);
+    }
 
     public static void main(String[] args) {
 
@@ -18,7 +24,7 @@ public class TestSingal {
             System.out.println("recv sig int");
             running.set(false);
         });
-      
+
 
         System.out.println("start");
         while (running.get()) {
@@ -31,10 +37,5 @@ public class TestSingal {
         }
         System.out.println("exit!");
     }
-
-    public static final int getProcessID() {  
-        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        // System.out.println(runtimeMXBean.getName());
-        return Integer.valueOf(runtimeMXBean.getName().split("@")[0]).intValue();
-    }
 }
+
