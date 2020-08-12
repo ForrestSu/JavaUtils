@@ -66,6 +66,9 @@ public class TestCaseDiv2 {
 				.setMessage(data.toByteString())
 				.build();
 
+		System.out.println(MsgType.SAVE_T0STOCK_REQ.name());
+
+
 		ZMQ.Context context = ZMQ.context(1);
 		System.out.println("Connecting ...");
 

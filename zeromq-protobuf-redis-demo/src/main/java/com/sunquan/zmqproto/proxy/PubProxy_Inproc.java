@@ -107,7 +107,7 @@ public class PubProxy_Inproc
                 return ;
             }
             
-            System.out.println("conn "+rc );
+            System.out.println("conn " + rc );
             
             m_socket.subscribe(topic);
             do {
