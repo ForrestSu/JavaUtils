@@ -1,7 +1,7 @@
 package com.sq.generic.CRTP;
 
 /**
- * c
+ * [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
  */
 public class Derived extends Base<Derived> {
 

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.sq.test.pb";
+option java_outer_classname = "TestPB";
+
+package test.pb;
+
+// import "typedef.proto";
+
+// The request message containing the user's name.
+message UserInfo {
+  string name = 1;
+  int32 age = 2;
+}
+

@@ -17,13 +17,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- maven -->
         <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
-        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-        
     </properties>
 
     <modules>
         <module>demo</module>
+        <module>protos</module>
         <module>grpc-demo</module>
         <module>zeromq-protobuf-redis-demo</module>
     </modules>

@@ -9,13 +9,17 @@ import io.grpc.StatusRuntimeException;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * A simple client that requests a greeting from the {@link HelloWorldServer}.
- */
+
 public class HelloWorldClient {
 
     private final ManagedChannel channel;
     private final GreeterGrpc.GreeterBlockingStub blockingStub;
+
+    /** Construct client for accessing HelloWorld server using the existing channel. */
+    HelloWorldClient(ManagedChannel channel) {
+        this.channel = channel;
+        blockingStub = GreeterGrpc.newBlockingStub(channel);
+    }
 
     /** Construct client connecting to HelloWorld server at {@code host:port}. */
     public HelloWorldClient(String host, int port) {
@@ -25,17 +29,11 @@ public class HelloWorldClient {
                 .usePlaintext().build());
     }
 
-    /** Construct client for accessing HelloWorld server using the existing channel. */
-    HelloWorldClient(ManagedChannel channel) {
-        this.channel = channel;
-        blockingStub = GreeterGrpc.newBlockingStub(channel);
-    }
-
     public void shutdown() throws InterruptedException {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    /** Say hello to server. */
+    /** 向服务端发送 hello 消息. */
     public void greet(String name) {
         System.out.println("send => [" + name + "] ...");
         HelloRequest request = HelloRequest.newBuilder().setName(name).build();
@@ -49,9 +47,6 @@ public class HelloWorldClient {
         System.out.println("recv <= " + response.getMessage());
     }
 
-    /**
-     * Greet server. If provided, the first element of {@code args} is the name to use in the greeting.
-     */
     public static void main(String[] args) throws Exception {
         // Access a service running on the local machine on port 50051
         HelloWorldClient client = new HelloWorldClient("localhost", 50051);
