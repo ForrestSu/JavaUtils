@@ -15,8 +15,8 @@ public class KafkaPropertiesUtil {
     public static final String CLIENT_ID = "SimpleConsumerDemoClient";
 
     public static Properties LoadProperties(String file_name) {
-        File fprop = new File(file_name);
-        if (!fprop.exists()) {
+        File f = new File(file_name);
+        if (!f.exists()) {
             System.err.println("file: " + file_name + " is not exist!");
             return null;
         }

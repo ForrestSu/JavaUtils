@@ -6,12 +6,11 @@ import com.sq.demo.examples.Producer;
 import com.sq.demo.utils.KafkaPropertiesUtil;
 
 public class KafkaProducerDemo {
-	
+
     /**
-     * java -cp ./kafkaDemoAcl-1.0.jar com.xunce.demo.KafkaProducerDemo ./acl.properties
+     * java -cp target/kafka-protobuf-1.0.jar com.sq.demo.KafkaProducerDemo ./acl.properties
      */
-    public static void main(String[] args) 
-    {
+    public static void main(String[] args) {
         if (args.length < 1) {
             System.err.println(">> Usage: java -jar app.jar /etc/uvframe/acl.properties");
             return;

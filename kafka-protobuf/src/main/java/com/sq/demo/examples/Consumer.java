@@ -21,16 +21,15 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 public class Consumer extends ShutdownableThread {
     private final KafkaConsumer<Integer, byte[]> consumer;
-    private final String topic;
+    private final List<String> topics;
 
     public Consumer(String topic, Properties props) {
         super("KafkaConsumerExample", false);
@@ -48,13 +47,13 @@ public class Consumer extends ShutdownableThread {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
 
         consumer = new KafkaConsumer<Integer, byte[]>(props);
-        this.topic = topic;
+        this.topics = Collections.singletonList(topic);
         System.out.println("topic = <" + topic + ">");
     }
 
     @Override
     public void doWork() {
-        consumer.subscribe(Collections.singletonList(this.topic));
+        consumer.subscribe(topics);
         while (true) {
             try {
                 ConsumerRecords<Integer, byte[]> records = consumer.poll(Duration.ofSeconds(1));

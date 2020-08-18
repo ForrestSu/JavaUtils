@@ -6,9 +6,9 @@ import com.sq.demo.examples.Consumer;
 import com.sq.demo.utils.KafkaPropertiesUtil;
 
 public class KafkaConsumerDemo {
-	
+
     /**
-     * java -cp ./kafkaDemoAcl-1.0.jar com.xunce.demo.KafkaConsumerDemo ./acl.properties
+     * java -cp target/kafka-protobuf-1.0.jar com.sq.demo.KafkaConsumerDemo ./acl.properties
      */
     public static void main(String[] args) {
         if (args.length < 1) {
@@ -28,10 +28,10 @@ public class KafkaConsumerDemo {
 
         System.out.println("start ...");
         String topic = props.getProperty("topic", "storage-1");
-        System.out.println("subscrible topic is:" + topic);
+        System.out.println("subscribe topic is:" + topic);
         Consumer consumerThread = new Consumer(topic, props);
         consumerThread.start();
-        
+
         boolean flag = true;
         while (flag) {
             try {
