@@ -2,25 +2,28 @@ package com.sq.demo.examples;
 
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;
+import org.apache.kafka.common.PartitionInfo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * 自定义：生产者的分区策略
- *
  */
 
-public class MyPartitionStrategy implements Partitioner {
+public class KeyOrderingPartitionStrategy implements Partitioner {
 
-
+    /**
+     * 根据 key的 hashCode 来分区
+     * 保证同一个 key 的所有消息，落在同一个分区上
+     *
+     * TODO: 这个 key 可以是股票代码, 资金账号, etc.
+     */
     @Override
     public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
-        /**
-         * 默认为 Round-Robin,轮流
-         * 根据入参信息，对消息进行分区;
-         */
 
-        return 0;
+        List<PartitionInfo> partitions = cluster.partitionsForTopic(topic);
+        return Math.abs(key.hashCode()) % partitions.size();
     }
 
     @Override
