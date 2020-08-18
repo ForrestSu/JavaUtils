@@ -24,6 +24,7 @@
         <module>demo</module>
         <module>protos</module>
         <module>grpc-demo</module>
+        <module>io-model-java</module>
         <module>zeromq-protobuf-redis-demo</module>
         <module>kafka-protobuf</module>
     </modules>
