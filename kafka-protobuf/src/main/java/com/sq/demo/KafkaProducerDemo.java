@@ -17,13 +17,6 @@ public class KafkaProducerDemo {
         }
         Properties props = KafkaPropertiesUtil.LoadProperties(args[0]);
 
-        // add into system
-        String kers_key = "java.security.auth.login.config";
-        System.setProperty(kers_key, props.getProperty(kers_key));
-        System.out.println("total load properties, load: " + props.size());
-        props.remove(kers_key);
-
-
         boolean isAsync = true;
         String topic = props.getProperty("topic", "test");
         System.out.println("publish topic is :" + topic);

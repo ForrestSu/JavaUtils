@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.sq.demo.examples;
 
 import kafka.utils.ShutdownableThread;
@@ -22,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -54,25 +39,19 @@ public class Consumer extends ShutdownableThread {
     @Override
     public void doWork() {
         consumer.subscribe(topics);
+        Duration timeout = Duration.ofSeconds(3);
         while (true) {
             try {
-                ConsumerRecords<Integer, byte[]> records = consumer.poll(Duration.ofSeconds(1));
+                ConsumerRecords<Integer, byte[]> records = consumer.poll(timeout);
                 for (ConsumerRecord<Integer, byte[]> record : records) {
-                    System.out.println("Received message: (" + record.key() + ", length is " + record.value().length
-                            + ") at offset " + record.offset());
+                    final String msg = new String(record.value(), StandardCharsets.UTF_8);
+                    System.out.println("Received: (" + record.key() + ", msg: " + msg + ") at offset " + record.offset());
                     // JSONObject jsonObject = JSONObject.parseObject(record.value());
                     // System.out.println("Content: "+JSONObject.toJSONString(jsonObject) );
-
-                    // System.out.println("record.value() = " + new String(record.value(), Charset.forName("UTF-8")));
-                    // String value = record.value();
-                    // ProtoBufUtil.UnPackMsg(value.getBytes(Charset.forName("UTF-8")));
-                    // ProtoBufUtil.UnPackMsg(record.value());
-                    // m_oraclewt.ExecuteSql(record.value());
                 }
-                System.out.println("poll...");
+                // System.out.println("poll...");
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("e");
             }
         }
     }

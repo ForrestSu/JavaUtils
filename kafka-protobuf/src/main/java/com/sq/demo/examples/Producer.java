@@ -1,22 +1,5 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.sq.demo.examples;
 
-import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -24,16 +7,15 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import com.sq.demo.utils.KafkaPropertiesUtil;
-
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class Producer extends Thread {
     private final KafkaProducer<Integer, String> producer;
     private final String topic;
     private final Boolean isAsync;
-    
+
     public Producer(String topic, Properties props, Boolean isAsync) {
         // props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaProperties.KAFKA_SERVER_URL + ":" +
         // KafkaProperties.KAFKA_SERVER_PORT);
@@ -46,68 +28,32 @@ public class Producer extends Thread {
     }
 
     public void run() {
-        int messageNo = 1;
-        String message = "sunquan-100";
+        System.out.println("tid: " + Thread.currentThread().getId());
+        int key = 0;
         while (true) {
-            long startTime = System.currentTimeMillis();
+            key++;
+            String message = "sunquan-" + key;
             // Send asynchronously
-            if (isAsync) { 
-                producer.send(new ProducerRecord<>(topic,
-                    messageNo,
-                    message), new DemoCallBack(startTime, messageNo, message));
-                
-            } else { 
-                // Send synchronously
+            if (isAsync) {
+                AckCallback cb = new AckCallback(key, message);
+                producer.send(new ProducerRecord<>(topic, key, message), cb);
+            } else {
                 try {
-                    producer.send(new ProducerRecord<>(topic,
-                        messageNo,
-                        message)).get();
-                    System.out.println("Sync sent message: (" + messageNo + ", " + message + ")");
+                    Future<RecordMetadata> fut = producer.send(new ProducerRecord<>(topic, key, message));
+                    // 阻塞等待 wait response blocked
+                    RecordMetadata metadata = fut.get();
+                    System.out.println("Sync sent message: (" + key + ", " + message + ")");
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }
-            ++messageNo;
             //just for test sleep 1s
             try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
 
-class DemoCallBack implements Callback {
-
-    private final long startTime;
-    private final int key;
-    private final String message;
-
-    public DemoCallBack(long startTime, int key, String message) {
-        this.startTime = startTime;
-        this.key = key;
-        this.message = message;
-    }
-
-    /**
-     * A callback method the user can implement to provide asynchronous handling of request completion. This method will
-     * be called when the record sent to the server has been acknowledged. Exactly one of the arguments will be
-     * non-null.
-     *
-     * @param metadata  The metadata for the record that was sent (i.e. the partition and offset). Null if an error
-     *                  occurred.
-     * @param exception The exception thrown during processing of this record. Null if no error occurred.
-     */
-    public void onCompletion(RecordMetadata metadata, Exception exception) {
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        if (metadata != null) {
-            System.out.println(
-                "Publish message(" + key + ", " + message + ") sent to partition(" + metadata.partition() +
-                    "), " +
-                    "offset(" + metadata.offset() + ") in " + elapsedTime + " ms");
-        } else {
-            exception.printStackTrace();
-        }
-    }
-}

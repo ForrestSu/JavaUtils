@@ -20,17 +20,13 @@ public class KafkaPropertiesUtil {
             System.err.println("file: " + file_name + " is not exist!");
             return null;
         }
-        boolean has_except = false;
         Properties props = new Properties();
         BufferedInputStream in;
         try {
             in = new BufferedInputStream(new FileInputStream(file_name));
             props.load(in);
         } catch (IOException ioe) {
-            has_except = true;
             System.err.println("Properties file: '" + file_name + "' could not be read." + ioe);
-        }
-        if (has_except) {
             return null;
         }
         return props;

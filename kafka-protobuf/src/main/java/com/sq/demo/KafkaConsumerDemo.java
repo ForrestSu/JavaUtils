@@ -18,12 +18,6 @@ public class KafkaConsumerDemo {
         Properties props = KafkaPropertiesUtil.LoadProperties(args[0]);
 
         System.out.println("props.size() " + props.size());
-        // must be add into system
-        /*
-         * String kers_key = "java.security.auth.login.config"; System.setProperty(kers_key,
-         * props.getProperty(kers_key)); System.out.println("load properties, load: " + props.size());
-         * props.remove(kers_key);
-         */
 
 
         System.out.println("start ...");
@@ -35,7 +29,7 @@ public class KafkaConsumerDemo {
         boolean flag = true;
         while (flag) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
                 // System.out.println("xxx");
             } catch (InterruptedException e) {
                 e.printStackTrace();
