@@ -15,7 +15,7 @@
     <name>kafka server demo</name>
 
     <properties>
-        <application.main.class>com.sq.demo.KafkaConsumerDemo</application.main.class>
+        <application.main.class>com.sq.KafkaConsumerDemo</application.main.class>
     </properties>
 
     <dependencies>

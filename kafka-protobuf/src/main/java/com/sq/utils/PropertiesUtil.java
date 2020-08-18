@@ -1,4 +1,4 @@
-package com.sq.demo.utils;
+package com.sq.utils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class KafkaPropertiesUtil {
+public class PropertiesUtil {
     public static final String TOPIC = "test";
     public static final String KAFKA_SERVER_URL = "192.168.0.223";
     public static final int KAFKA_SERVER_PORT = 9092;

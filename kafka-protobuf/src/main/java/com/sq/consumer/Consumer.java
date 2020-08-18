@@ -1,4 +1,4 @@
-package com.sq.demo.examples;
+package com.sq.consumer;
 
 import kafka.utils.ShutdownableThread;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

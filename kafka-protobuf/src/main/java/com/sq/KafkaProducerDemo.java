@@ -1,9 +1,9 @@
-package com.sq.demo;
+package com.sq;
 
 import java.util.Properties;
 
-import com.sq.demo.examples.Producer;
-import com.sq.demo.utils.KafkaPropertiesUtil;
+import com.sq.producer.Producer;
+import com.sq.utils.PropertiesUtil;
 
 public class KafkaProducerDemo {
 
@@ -15,7 +15,7 @@ public class KafkaProducerDemo {
             System.err.println(">> Usage: java -jar app.jar /etc/uvframe/acl.properties");
             return;
         }
-        Properties props = KafkaPropertiesUtil.LoadProperties(args[0]);
+        Properties props = PropertiesUtil.LoadProperties(args[0]);
 
         boolean isAsync = true;
         String topic = props.getProperty("topic", "test");

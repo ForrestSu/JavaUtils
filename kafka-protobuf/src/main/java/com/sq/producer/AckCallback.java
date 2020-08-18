@@ -1,4 +1,4 @@
-package com.sq.demo.examples;
+package com.sq.producer;
 
 
 import org.apache.kafka.clients.producer.Callback;

@@ -1,9 +1,9 @@
-package com.sq.demo;
+package com.sq;
 
 import java.util.Properties;
 
-import com.sq.demo.examples.Consumer;
-import com.sq.demo.utils.KafkaPropertiesUtil;
+import com.sq.consumer.Consumer;
+import com.sq.utils.PropertiesUtil;
 
 public class KafkaConsumerDemo {
 
@@ -15,7 +15,7 @@ public class KafkaConsumerDemo {
             System.err.println(">> Usage: java -jar app.jar /etc/uvframe/acl.properties");
             return;
         }
-        Properties props = KafkaPropertiesUtil.LoadProperties(args[0]);
+        Properties props = PropertiesUtil.LoadProperties(args[0]);
 
         System.out.println("props.size() " + props.size());
 
