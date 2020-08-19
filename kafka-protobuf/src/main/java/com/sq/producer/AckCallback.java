@@ -24,6 +24,7 @@ public class AckCallback implements Callback {
     public void onCompletion(RecordMetadata meta, Exception e) {
         double elapsedMs = getElapseTime() / 1000000.0;
         if (e != null) {
+            // 对失败的消息, 进行重发
             e.printStackTrace();
             return;
         }

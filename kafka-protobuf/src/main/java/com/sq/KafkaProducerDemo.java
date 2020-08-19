@@ -10,17 +10,22 @@ public class KafkaProducerDemo {
     /**
      * java -cp target/kafka-protobuf-1.0.jar com.sq.demo.KafkaProducerDemo ./acl.properties
      */
+
+    private static final String topic = "test";
+    private static final String servers = "test-ogg-02:9092";
+
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.err.println(">> Usage: java -jar app.jar /etc/uvframe/acl.properties");
-            return;
-        }
-        Properties props = PropertiesUtil.LoadProperties(args[0]);
+
+        System.out.println("start ...");
+        Properties props = new Properties();
+        props.put("topic", topic);
+        props.put("bootstrap.servers", servers);
 
         boolean isAsync = true;
-        String topic = props.getProperty("topic", "test");
         System.out.println("publish topic is :" + topic);
-        Producer producerThread = new Producer(topic, props, isAsync);
-        producerThread.start();
+        Producer producer = new Producer(topic, props, isAsync);
+        producer.run();
+
+        System.out.println("exit...");
     }
 }

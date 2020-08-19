@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class Producer extends Thread {
+public class Producer {
     private final KafkaProducer<Integer, String> producer;
     private final String topic;
     private final Boolean isAsync;
