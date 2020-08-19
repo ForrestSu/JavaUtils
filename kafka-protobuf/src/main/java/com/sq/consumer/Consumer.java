@@ -31,7 +31,7 @@ public class Consumer {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
 
-        consumer = new KafkaConsumer<Integer, byte[]>(props);
+        consumer = new KafkaConsumer<>(props);
         this.topics = Collections.singletonList(topic);
         System.out.println("subscribe topic = <" + topic + ">");
     }
