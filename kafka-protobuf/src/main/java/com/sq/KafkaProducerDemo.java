@@ -1,9 +1,7 @@
 package com.sq;
 
 import java.util.Properties;
-
 import com.sq.producer.Producer;
-import com.sq.utils.PropertiesUtil;
 
 public class KafkaProducerDemo {
 
