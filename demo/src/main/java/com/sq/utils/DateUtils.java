@@ -28,7 +28,7 @@ public class DateUtils {
     /**
      * @return String CurDate YYYY-MM-DD
      */
-    public static String CurDateHunman() {
+    public static String CurDateHuman() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(new Date());
     }
